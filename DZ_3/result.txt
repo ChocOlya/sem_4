@@ -1,0 +1,167 @@
+Sasha 809 210
+Petia 907 223
+Olga 333 209
+Oleg 567 505
+Sergey 915 209
+Olga 777 208
+
+Sasha 809 210
+Kolia 406 109
+Fedor 888 604
+Petia 907 223
+Olga 333 209
+Oleg 567 505
+Sergey 915 209
+Matvey 925 209
+Olga 777 208
+
+Sasha 809 210
+Kolia 406 109
+Fedor 888 604
+Petia 907 223
+Olga 333 209
+Sergey 915 209
+Matvey 925 209
+Olga 777 208
+
+Olga 333 209
+Olga 777 208
+
+Sasha 809 210
+Kolia 406 109
+Fedor 888 604
+Petia 907 223
+Olga 333 209
+Oleg 567 505
+Sergey 915 209
+Matvey 925 209
+Olga 777 208
+
+Sasha 809 210
+Petia 907 223
+Olga 333 209
+Oleg 567 505
+Sergey 915 209
+Matvey 925 209
+Olga 777 208
+
+Olga 333 209
+Sergey 915 209
+Matvey 925 209
+
+Sasha 809 210
+Kolia 406 109
+Fedor 888 604
+Petia 907 223
+Olga 333 209
+Oleg 567 505
+Sergey 915 209
+Matvey 925 209
+Olga 777 208
+
+Sasha 809 210
+Kolia 406 109
+Petia 907 223
+Olga 333 209
+Oleg 567 505
+Sergey 915 209
+Matvey 925 209
+Olga 777 208
+
+Sasha 809 210
+Kolia 406 109
+Fedor 888 604
+Petia 907 223
+Oleg 567 505
+Olga 777 208
+
+Fedor 888 604
+Oleg 567 505
+
+Sasha 809 210
+Kolia 406 109
+Petia 907 223
+Olga 333 209
+Sergey 915 209
+Matvey 925 209
+Olga 777 208
+
+
+Sasha 809 210
+Kolia 406 109
+Fedor 888 604
+Petia 907 223
+Olga 333 209
+Oleg 567 505
+Sergey 915 209
+Matvey 925 209
+Olga 777 208
+
+Kolia 406 109
+Olga 333 209
+Oleg 567 505
+
+Sasha 809 210
+Kolia 406 109
+Fedor 888 604
+Petia 907 223
+Olga 333 209
+Oleg 567 505
+Sergey 915 209
+Matvey 925 209
+Olga 777 208
+
+Sasha 809 210
+Kolia 406 109
+Fedor 888 604
+Petia 907 223
+Olga 333 209
+Oleg 567 505
+Sergey 915 209
+Matvey 925 209
+Olga 777 208
+
+Kolia 406 109
+Olga 333 209
+
+Olga 333 209
+Oleg 567 505
+Olga 777 208
+
+Olga 333 209
+Oleg 567 505
+Olga 777 208
+
+Oleg 567 505
+
+Sergey 915 209
+
+Sergey 915 209
+
+Sergey 915 209
+Matvey 925 209
+
+Sasha 809 210
+Kolia 406 109
+Fedor 888 604
+Petia 907 223
+Olga 333 209
+Oleg 567 505
+Sergey 915 209
+Matvey 925 209
+Olga 777 208
+
+Sergey 915 209
+
+Sergey 915 209
+
+Olga 333 209
+Olga 777 208
+
+Oleg 567 505
+
+Sergey 915 209
+
+Sergey 915 209
+
+./a.out : Result = 135 Elapsed = 0.00

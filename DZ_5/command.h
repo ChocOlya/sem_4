@@ -1,0 +1,548 @@
+# ifndef command_H
+# define command_H
+# include <stdio.h>
+# include "record.h"
+# include "operation.h"
+# include "ordering.h"
+
+
+
+
+bool where (char * s);
+bool read_or(ordering *place, char * s, int i);
+bool read_nach(char *s, ordering *place, char ** end);
+bool read_ending(char *s, ordering *plase);
+bool check_com(command_type f, char *con, char *who, char **end2);
+
+bool where (char * s)
+{
+	if (strcmp(s, "where") == 0) return true;
+	return false;
+}
+
+
+bool read_or(ordering *place, char * s, int i)
+{
+	if (strcmp(s, "*") == 0)
+	{
+		if (i == 0) 
+		{
+			place[0] = ordering::name;
+			place[1] = ordering::phone;
+			place[2] = ordering::group;
+			return true;
+		}
+		return false;
+	}
+	if (strcmp(s, "name") == 0) 
+	{
+		if (place[i] != ordering::none) return false;
+		place[i] = ordering::name;
+		return true;
+	}
+	if (strcmp(s, "phone") == 0) 
+	{
+		if (place[i] != ordering::none) return false;
+		place[i] = ordering::phone;
+		return true;
+	}
+	if (strcmp(s, "group") == 0) 
+	{
+		if (place[i] != ordering::none) return false;
+		place[i] = ordering::group;
+		return true;
+	}
+	return false;
+
+}
+
+
+bool check_com(command_type f, char *con, char *who, char **end2)
+{
+	if (f == command_type::select)
+	{
+		if (strcmp(con, "order") == 0)
+		{
+			who = strtok_r(who, " \t\n", end2);
+			if (strcmp(who, "by") == 0) return true;
+			return false;
+		}
+	}
+	if (f == command_type::del)
+	{
+		if (con == nullptr) return true;
+	}
+	return false;
+
+}
+
+
+
+bool read_ending(char *s, ordering *plase)
+{
+	s = strtok_r(s, " ,\t\n", end);
+	if (s == nullptr) return false;
+	//printf("%s\n", s);	
+	if (read_or(place, s, 0) == false) return false;
+	s = strtok_r(*end, " ,\t\n", end);
+	if (s == nullptr) return true;	
+	if (read_or(place, s, 1) == false) return false;
+	s = strtok_r(*end, " ,\t\n", end);
+	if (s == nullptr) return true;
+	//printf("%s\n", s);
+	if (read_or(place, s, 2) == false) return false;
+	s = strtok_r(*end, " ,\t\n", end);
+	if (s == nullptr) return true;
+	return false;
+}
+
+
+
+bool read_nach(char *s, ordering *place, char ** end)
+{
+	s = strtok_r(s, " ,\t\n", end);
+	if (s == nullptr) return false;
+	//printf("%s\n", s);	
+	if (read_or(place, s, 0) == false) return false;
+
+	s = strtok_r(*end, " ,\t\n", end);
+	if (s == nullptr) return false;	
+	//printf("%s\n", s);
+	if (where(s) == false)
+	{
+		if (read_or(place, s, 1) == false) return false;
+
+
+		s = strtok_r(*end, " ,\t\n", end);
+		if (s == nullptr) return false;
+		//printf("%s\n", s);
+
+		if (where(s) == false)
+		{
+			//printf("Case word word word where\n");
+			if (read_or(place, s, 2) == false) return false;
+			s = strtok_r(*end, " ,\t\n", end);
+			if (s == nullptr) return false;
+			//printf("%s\n", s);
+		}
+		//else printf("Case word word where\n");
+	}
+	//else printf("Case word where\n");
+	if (where(s) == false) return false;
+	return true;
+}
+
+
+
+class command : public record
+{
+	private:
+		static const int max_items = 3;
+		command_type type = command_type::none;
+		condition c_name = condition::none;
+		condition c_phone = condition::none;
+		condition c_group = condition::none;
+		operation op = operation::none;
+		ordering order[max_items] = { };
+		ordering order_by[max_items] = { };
+	public:
+		command () = default;
+		~command () = default;
+		// Convert string command to data structure
+		// Example 1: "phone = 1234567" parsed to
+		// (command::phone = 1234567, command::c_phone = condition::eq)
+		// other fields are unspecified
+		// Example 2: "name like St%" parsed to
+		// (command::name = "St%", command::c_name = condition::like)
+		// other fields are unspecified
+
+		command_type get_type()
+		{ return type; }
+
+
+		bool read_command(char *s)
+		{
+			this->erase_command();
+			char *start = s, *end = nullptr;
+			start = strtok_r(s, " \t\n", &end);
+			if (start == nullptr) return true;
+			if (strcmp(start, "quit") == 0)
+			{
+				type = command_type::quit;
+				return true;
+			} 
+			if (strcmp(start, "insert") == 0)
+			{
+				type = command_type::insert;
+
+				//read name
+				s = strtok_r(end, " \t\n", &end);
+				if (s == nullptr) return false;
+				if (this->set_name(where) != true) return false;
+
+				//read phone
+				s = strtok_r(end, " \t\n", &end);
+				if (s == nullptr) return false;
+				int ph = 0;
+				if (sscanf(s, "%d", &ph) != 1) return false;
+				this->set_phone(ph);
+
+				//read group 
+				s = strtok_r(end, " \t\n", &end);
+				if (s == nullptr) return false;
+				int gr = 0;
+				if (sscanf(s, "%d", &gr) != 1) return false;
+				this->set_group(gr);
+				return true;
+			}
+			if (strcmp(start, "select") == 0)
+			{
+				type = command_type::select;
+				char *end1 = nullptr, *end2 = nullptr;
+				if (read_nach(end, order, &end1) == false) return false;
+				if (this->parse(end1, &end2) == false) return false;
+				if (this ->ending(end2, order_by) == false) return false;
+				return true;
+			}
+			if (strcmp(start, "delete") == 0)
+			{
+				type = command_type::select;
+				char *end2 = nullptr;
+				s = strtok_r(end, " \t\n", &end2);
+				if (s == nullptr) return true;
+				if (where(s) == false) return false;
+				if (this->parse(end, &end2) == false) return false;
+				return true;
+			}
+
+		}
+
+		bool read_com(char *who, char *what, char *where, char **ost)
+		{
+			if (strcmp(who, "name") == 0)
+			{
+				if (c_name != condition::none) 
+				{
+					printf(" Filds are not different\n");
+					return false;
+				}
+				if (strcmp(what, "=") == 0)
+					c_name = condition::eq;
+				else if(strcmp(what, "<>") == 0)
+					c_name = condition::ne;
+				else if(strcmp(what, ">") == 0)
+					c_name = condition::gt;
+				else if(strcmp(what, "<") == 0)
+					c_name = condition::lt;
+				else if(strcmp(what, ">=") == 0)
+					c_name = condition::ge;
+				else if(strcmp(what, "<=") == 0)
+					c_name = condition::le;
+				else if(strcmp(what, "like") == 0)
+					c_name = condition::like;
+				else if(strcmp(what, "not") == 0)
+				{
+					what = strtok_r(where, " \t\n", &where);
+					if (what == nullptr) return false;
+					//printf("what %s\n", what);
+					if (strcmp(what, "like") == 0)
+						c_name = condition::nlike;
+					else return false;
+					//printf("ok\n");
+				}
+				else
+					return false;
+				if (where == nullptr) return false;
+				where = strtok_r(where, " \t\n", ost);
+				//printf("where %s\n", where);
+				// if (*ost == nullptr) printf("GOOD\n");
+				if (this->set_name(where) != true) return false;
+				return true;
+				
+			}
+			if (strcmp(who, "phone") == 0)
+			{
+				if (c_phone != condition::none) 
+				{
+					printf(" Filds are not different\n");
+					return false;
+				}
+				if (strcmp(what, "=") == 0)
+					c_phone = condition::eq;
+				else if(strcmp(what, "<>") == 0)
+					c_phone = condition::ne;
+				else if(strcmp(what, ">") == 0)
+					c_phone = condition::gt;
+				else if(strcmp(what, "<") == 0)
+					c_phone = condition::lt;
+				else if(strcmp(what, ">=") == 0)
+					c_phone = condition::ge;
+				else if(strcmp(what, "<=") == 0)
+					c_phone = condition::le;
+				else
+					return false;
+				int ph = 0;
+				if (where == nullptr) return false;
+				where = strtok_r(where, " \t\n", ost);
+				//printf("where %s\n", where);
+				if (sscanf(where, "%d", &ph) != 1)
+					return false;
+				set_phone(ph);
+				return true;
+			}
+			if (strcmp(who, "group") == 0)
+			{
+				if (c_group != condition::none) 
+				{
+					printf(" Filds are not different\n");
+					return false;
+				}
+				if (strcmp(what, "=") == 0)
+					c_group = condition::eq;
+				else if(strcmp(what, "<>") == 0)
+					c_group = condition::ne;
+				else if(strcmp(what, ">") == 0)
+					c_group = condition::gt;
+				else if(strcmp(what, "<") == 0)
+					c_group = condition::lt;
+				else if(strcmp(what, ">=") == 0)
+					c_group = condition::ge;
+				else if(strcmp(what, "<=") == 0)
+					c_group = condition::le;
+				else
+					return false;
+				int gr = 0;
+				if (where == nullptr) return false;
+				where = strtok_r(where, " \t\n", ost);
+				//printf("where %s\n", where);
+				if (sscanf(where, "%d", &gr) != 1)
+					return false;
+				set_group(gr);
+				return true;
+			}
+			return false;	
+		}
+		
+
+		bool read_op(char *con)
+		{
+			if (strcmp(con, "and") == 0)
+			{
+				if (op == operation::lor) return false;
+				op = operation::land;
+				return true;
+			}
+			if (strcmp(con, "or") == 0)
+			{
+				if (op == operation::land) return false;
+				op = operation::lor;
+				return true;
+			}
+			return false;
+		}
+
+		bool parse (char * string, char **end2)
+		{
+			char *who = nullptr, *what = nullptr, *where = nullptr, *con = nullptr;
+			who = strtok_r(string, " \t\n", &what);
+			//printf("who %s\n", who);
+			if (who == nullptr) return false; 
+			what = strtok_r(what, " \t\n", &where);
+			//printf("what %s\n", what);
+			if (this->read_com(who, what, where, &con) == false) return false;
+			//printf("Ok\n");
+			con = strtok_r(con, " \t\n", &who);
+			//printf("truble\n");
+			//if (con == nullptr) return true;
+			if (check_com(type, con, who, end2) == true) return true;
+			//printf("op %s\n", con);
+			if(this->read_op(con) == false) return false;
+
+			if (who == nullptr) return false;
+			who = strtok_r(who, " \t\n", &what);
+			//printf("who %s\n", who);
+			if (who == nullptr) return false; 
+			what = strtok_r(what, " \t\n", &where);
+			//printf("what %s\n", what);
+			if (this->read_com(who, what, where, &con) == false) return false;
+			con = strtok_r(con, " \t\n", &who);
+			//if (con == nullptr) return true;
+			if (check_com(type, con, who, end2) == true) return true;
+			//printf("op %s\n", con);
+			if(this->read_op(con) == false) return false;
+
+			if (who == nullptr) return false;
+			who = strtok_r(who, " \t\n", &what);
+			//printf("who %s\n", who);
+			if (who == nullptr) return false; 
+			what = strtok_r(what, " \t\n", &where);
+			//printf("what %s\n", what);
+			if (this->read_com(who, what, where, &con) == false) return false;
+			con = strtok_r(con, " \t\n", &who);
+			//if (con == nullptr) return true;
+			if (check_com(type, con, who, end2) == true) return true;
+			return false;
+		}
+		bool like()
+		{
+			if (c_name == condition::like || c_name == condition::nlike) return true;
+			return false;
+		}
+		// Print parsed structure
+		void print (FILE *fp = stdout) const
+		{
+			fprintf(fp, "We want to find people with\n");
+			if (c_name != condition::none)
+			{
+				fprintf(fp,"name ");
+				switch(c_name)
+				{
+					case condition::eq:
+					fprintf(fp, "= ");
+					break;
+					case condition::ne:
+					fprintf(fp, "<> ");
+					break;
+					case condition::lt:
+					fprintf(fp, "< ");
+					break;
+					case condition::gt:
+					fprintf(fp, "> ");
+					break;
+					case condition::le:
+					fprintf(fp, "<= ");
+					break;
+					case condition::ge:
+					fprintf(fp, ">= ");
+					break;
+					case condition::like:
+					fprintf(fp, "like ");
+					break;
+					case condition::nlike:
+					fprintf(fp, "not like ");
+					break;
+					case condition::none:
+					break;
+				}
+				fprintf(fp, "%s\n", this->get_name());
+				if (op != operation::none)
+				{
+					if (op == operation::lor) printf("OR\n");
+					else printf("AND\n");
+				}
+			}
+			if (c_phone != condition::none)
+			{
+				fprintf(fp, "phone ");
+				switch(c_phone)
+				{
+					case condition::eq:
+					fprintf(fp, "= ");
+					break;
+					case condition::ne:
+					fprintf(fp, "<> ");
+					break;
+					case condition::lt:
+					fprintf(fp, "< ");
+					break;
+					case condition::gt:
+					fprintf(fp, "> ");
+					break;
+					case condition::le:
+					fprintf(fp, "<= ");
+					break;
+					case condition::ge:
+					fprintf(fp, ">= ");
+					break;
+					case condition::like:
+					case condition::nlike:
+					case condition::none:
+					break;
+				}
+				fprintf(fp, "%d\n", this->get_phone());
+				if (op != operation::none)
+				{
+					if (op == operation::lor) printf("OR\n");
+					else printf("AND\n");
+				}
+			}
+			if (c_group!= condition::none)
+			{
+				fprintf(fp, "group ");
+				switch(c_group)
+				{
+					case condition::eq:
+					fprintf(fp, "= ");
+					break;
+					case condition::ne:
+					fprintf(fp, "<> ");
+					break;
+					case condition::lt:
+					fprintf(fp, "< ");
+					break;
+					case condition::gt:
+					fprintf(fp, "> ");
+					break;
+					case condition::le:
+					fprintf(fp, "<= ");
+					break;
+					case condition::ge:
+					fprintf(fp, ">= ");
+					break;
+					case condition::like:
+					case condition::nlike:
+					case condition::none:
+					break;
+				}
+				fprintf(fp, "%d\n", this->get_group());
+			}
+			printf("\n");
+		}
+		
+
+		void erase_command ()
+		{
+			this->erase();
+			type = command_type::none;
+			c_name = condition::none;
+			c_phone = condition::none;
+			c_group = condition::none;
+			op = operation::none;
+
+			for (int i = 0, i < max_items; order[i] = ordering::none, order_by[i] = ordering::none, i++);
+		}
+
+
+
+		// Apply command, return comparision result for record ’x’
+		bool apply (const record& x, razbor *Raz = nullptr) const
+		{
+			if (c_phone != condition::none)
+			{
+				bool res = x.compare_phone(c_phone, *this);
+				if (op != operation::lor)
+				{
+					if (res == false) return false;
+				}
+				else if (res == true) return true;
+			}
+			if (c_group != condition::none)
+			{
+				bool res = x.compare_group(c_group, *this);
+				if (op != operation::lor)
+				{
+					if (res == false) return false;
+				}
+				else if (res == true) return true;//one of conditions is right
+			}
+			if (c_name != condition::none)
+			{
+				//printf("Lets check name\n");
+				bool res = x.compare_name(c_name, *this, Raz);
+				return res;
+			}
+			if (op == operation::lor) return false;
+			return true;
+		}
+};
+# endif

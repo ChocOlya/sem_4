@@ -1,0 +1,274 @@
+We want to find people with
+name = Alice
+
+Alice 123 101
+
+We want to find people with
+group <> 102
+
+Alice 123 101
+Charlie 789 103
+David 123 104
+Eve 456 105
+Frank 789 106
+Grace 111 107
+Henry 222 108
+Ivan 333 109
+John 444 110
+A% 999 201
+B_ 888 202
+C[1-2] 777 203
+D^ 666 204
+E\F 555 205
+Test_123 111 206
+Test%456 222 207
+Test[abc] 333 208
+Test^def 444 209
+Test\\back 555 210
+
+We want to find people with
+phone > 200
+
+Bob 456 102
+Charlie 789 103
+Eve 456 105
+Frank 789 106
+Henry 222 108
+Ivan 333 109
+John 444 110
+A% 999 201
+B_ 888 202
+C[1-2] 777 203
+D^ 666 204
+E\F 555 205
+Test%456 222 207
+Test[abc] 333 208
+Test^def 444 209
+Test\\back 555 210
+
+We want to find people with
+phone <= 456
+
+Alice 123 101
+Bob 456 102
+David 123 104
+Eve 456 105
+Grace 111 107
+Henry 222 108
+Ivan 333 109
+John 444 110
+Test_123 111 206
+Test%456 222 207
+Test[abc] 333 208
+Test^def 444 209
+
+We want to find people with
+group >= 102
+
+Bob 456 102
+Charlie 789 103
+David 123 104
+Eve 456 105
+Frank 789 106
+Grace 111 107
+Henry 222 108
+Ivan 333 109
+John 444 110
+A% 999 201
+B_ 888 202
+C[1-2] 777 203
+D^ 666 204
+E\F 555 205
+Test_123 111 206
+Test%456 222 207
+Test[abc] 333 208
+Test^def 444 209
+Test\\back 555 210
+
+We want to find people with
+name like A%
+
+MASK 02
+Sence A@
+Min @@
+Max @@
+Alice 123 101
+A% 999 201
+
+We want to find people with
+name like B_
+
+MASK 01
+Sence B@
+Min @@
+Max @@
+B_ 888 202
+
+We want to find people with
+name like [C-H]%
+
+MASK 32
+Sence @@
+Min C@
+Max H@
+Charlie 789 103
+David 123 104
+Eve 456 105
+Frank 789 106
+Grace 111 107
+Henry 222 108
+C[1-2] 777 203
+D^ 666 204
+E\F 555 205
+
+We want to find people with
+name like [^A-C]%
+
+MASK 42
+Sence @@
+Min A@
+Max C@
+David 123 104
+Eve 456 105
+Frank 789 106
+Grace 111 107
+Henry 222 108
+Ivan 333 109
+John 444 110
+D^ 666 204
+E\F 555 205
+Test_123 111 206
+Test%456 222 207
+Test[abc] 333 208
+Test^def 444 209
+Test\\back 555 210
+
+We want to find people with
+name like A\%
+
+MASK 00
+Sence A%
+Min @@
+Max @@
+A% 999 201
+
+We want to find people with
+name like B\_
+
+MASK 00
+Sence B_
+Min @@
+Max @@
+B_ 888 202
+
+We want to find people with
+name like C\[1-2\]
+
+MASK 000000
+Sence C[1-2]
+Min @@@@@@
+Max @@@@@@
+C[1-2] 777 203
+
+We want to find people with
+name like E\\\\F
+
+MASK 0000
+Sence E\\F
+Min @@@@
+Max @@@@
+
+We want to find people with
+name not like A%
+
+MASK 02
+Sence A@
+Min @@
+Max @@
+Bob 456 102
+Charlie 789 103
+David 123 104
+Eve 456 105
+Frank 789 106
+Grace 111 107
+Henry 222 108
+Ivan 333 109
+John 444 110
+B_ 888 202
+C[1-2] 777 203
+D^ 666 204
+E\F 555 205
+Test_123 111 206
+Test%456 222 207
+Test[abc] 333 208
+Test^def 444 209
+Test\\back 555 210
+
+We want to find people with
+name not like [A-C]%
+
+MASK 32
+Sence @@
+Min A@
+Max C@
+David 123 104
+Eve 456 105
+Frank 789 106
+Grace 111 107
+Henry 222 108
+Ivan 333 109
+John 444 110
+D^ 666 204
+E\F 555 205
+Test_123 111 206
+Test%456 222 207
+Test[abc] 333 208
+Test^def 444 209
+Test\\back 555 210
+
+We want to find people with
+phone = 123
+AND
+group = 101
+
+Alice 123 101
+
+We want to find people with
+name like A%
+AND
+phone = 123
+AND
+group = 101
+
+MASK 02
+Sence A@
+Min @@
+Max @@
+Alice 123 101
+
+We want to find people with
+name = Alice
+OR
+group = 102
+
+Alice 123 101
+Bob 456 102
+
+We want to find people with
+name = Alice
+OR
+phone = 789
+OR
+group = 102
+
+Alice 123 101
+Bob 456 102
+Charlie 789 103
+Frank 789 106
+
+We want to find people with
+name = Alice
+
+101 Alice
+
+./a.out : Result = 137 Elapsed = 0.00

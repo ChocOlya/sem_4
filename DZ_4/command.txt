@@ -1,0 +1,20 @@
+* where name = Alice
+* where group <> 102
+* where phone > 200
+* where phone <= 456
+* where group >= 102
+* where name like A%
+* where name like B_
+* where name like [C-H]%
+* where name like [^A-C]%
+* where name like A\%
+* where name like B\_
+* where name like C\[1-2\]
+* where name like E\\\\F
+* where name not like A%
+* where name not like [A-C]%
+* where phone = 123 and group = 101
+* where name like A% and phone = 123 and group = 101
+* where name = Alice or group = 102
+* where name = Alice or group = 102 or phone = 789
+group, name where name = Alice

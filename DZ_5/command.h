@@ -73,6 +73,7 @@ bool check_com(command_type f, char *con, char *who, char **end2)
 	}
 	if (f == command_type::del)
 	{
+		//printf("wow\n");
 		if (con == nullptr) return true;
 	}
 	return false;
@@ -176,8 +177,10 @@ class command : public record
 		bool read_command(char *s)
 		{
 			this->erase_command();
+			//printf("buuu\n");
 			char *start = s, *end = nullptr;
 			start = strtok_r(s, " \t\n", &end);
+			//printf("start = %s\n", start);
 			if (start == nullptr) return true;
 			if (strcmp(start, "quit") == 0)
 			{
@@ -189,19 +192,22 @@ class command : public record
 				type = command_type::insert;
 
 				//read name
-				s = strtok_r(end, " \t\n", &end);
+				s = strtok_r(end, " (,\t\n", &end);
 				if (s == nullptr) return false;
+				printf("name = %s\n", s);
 				if (this->set_name(s) != true) return false;
 
 				//read phone
-				s = strtok_r(end, " \t\n", &end);
+				s = strtok_r(end, " ,\t\n", &end);
 				if (s == nullptr) return false;
+				printf("phone = %s\n", s);
 				int ph = 0;
 				if (sscanf(s, "%d", &ph) != 1) return false;
 				this->set_phone(ph);
 
 				//read group 
-				s = strtok_r(end, " \t\n", &end);
+				s = strtok_r(end, " ),\t\n", &end);
+				printf("group = %s\n", s);
 				if (s == nullptr) return false;
 				int gr = 0;
 				if (sscanf(s, "%d", &gr) != 1) return false;
@@ -213,18 +219,23 @@ class command : public record
 				type = command_type::select;
 				char *end1 = nullptr, *end2 = nullptr;
 				if (read_nach(end, order, &end1) == false) return false;
+				//printf("We read the what filds should be printed\n");
 				if (this->parse(end1, &end2) == false) return false;
+				//printf("We read the uslovia poiska\n");
 				if (read_ending(end2, order_by) == false) return false;
+				//printf("where is the problem?\n");
 				return true;
 			}
 			if (strcmp(start, "delete") == 0)
 			{
-				type = command_type::select;
+				type = command_type::del;
 				char *end2 = nullptr;
-				s = strtok_r(end, " \t\n", &end2);
+				s = strtok_r(end, " \t\n", &end);
 				if (s == nullptr) return true;
 				if (where(s) == false) return false;
+				//printf("delete where\n");
 				if (this->parse(end, &end2) == false) return false;
+				//printf("We read the uslovia poiska\n");
 				return true;
 			}
 			return false;
@@ -364,13 +375,14 @@ class command : public record
 			what = strtok_r(what, " \t\n", &where);
 			//printf("what %s\n", what);
 			if (this->read_com(who, what, where, &con) == false) return false;
-			//printf("Ok\n");
 			con = strtok_r(con, " \t\n", &who);
 			//printf("truble\n");
 			//if (con == nullptr) return true;
+			//printf("pupupupu0\n");
 			if (check_com(type, con, who, end2) == true) return true;
 			//printf("op %s\n", con);
 			if(this->read_op(con) == false) return false;
+			//printf("pupupupu\n");
 
 			if (who == nullptr) return false;
 			who = strtok_r(who, " \t\n", &what);
@@ -405,7 +417,24 @@ class command : public record
 		// Print parsed structure
 		void print (FILE *fp = stdout) const
 		{
-			fprintf(fp, "We want to find people with\n");
+			if (type == command_type::insert) 
+			{
+				fprintf(fp, "We want to add a person\n");
+				const record *a = this;
+				a->print(order);
+				return;
+			}
+			if (type == command_type::quit)
+			{
+				fprintf(fp, "We want to QUIT\n");
+				return;
+			}
+			if (type == command_type::none)
+			{
+				return;
+			}
+			if (type == command_type::select) fprintf(fp, "We want to find people with\n");
+			if (type == command_type::del) fprintf(fp, "We want to delete people with\n");
 			if (c_name != condition::none)
 			{
 				fprintf(fp,"name ");
@@ -531,6 +560,7 @@ class command : public record
 		// Apply command, return comparision result for record ’x’
 		bool apply (const record& x, razbor *Raz = nullptr) const
 		{
+			//printf("pupupupu\n");
 			if (c_phone != condition::none)
 			{
 				bool res = x.compare_phone(c_phone, *this);

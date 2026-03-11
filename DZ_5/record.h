@@ -150,23 +150,25 @@ class record
 			}
 			return false;
 		}
-		void print (ordering *place, FILE * fp = stdout)
+		void print (const ordering *place = nullptr, FILE * fp = stdout) const 
 		{
+			if (place == nullptr)
+			{
+				printf("%s %d %d\n", name.get(), phone, group);
+				return;
+			}
 			for (int i = 0; i < 3; i++)
 			{
 				switch(place[i])
 				{
 					case ordering::name:
-					if (i) fprintf(fp, " ");
-					fprintf(fp, "%s", name.get());
+					fprintf(fp, " %s", name.get());
 					continue;
 					case ordering::phone:
-					if (i) fprintf(fp, " ");
-					fprintf(fp, "%d", phone);
+					fprintf(fp, " %d", phone);
 					continue;
 					case ordering::group:
-					if (i) fprintf(fp, " ");
-					fprintf(fp, "%d", group);
+					fprintf(fp, " %d", group);
 					continue;
 					case ordering::none:
 					fprintf(fp, "\n");

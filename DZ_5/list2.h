@@ -108,27 +108,35 @@ class list2
 			}
 			return io_status::success;
 		}
-		list2_node * apply(command* test, int& kol)
+		list2_node * apply(command* test, int& kol, razbor *HELP = nullptr)
 		{
 			list2_node *curr = head;
+			command_type t = test->get_type();
 			list2_node *head_el = nullptr;
 			list2_node *next_el = nullptr;
+			//printf("buuu0\n");
 			while(curr != nullptr)
 			{	
-				if (test->apply(*curr) == true)
+				//printf("muuu\n");
+				if (test->apply(*curr, HELP) == true)
 				{
-					if (test->get_type() == command_type::select) kol++;
+					//printf("buuu\n");
+					if (t == command_type::select) kol++;
 					if (head_el == nullptr)
 					{
 						head_el = curr;
 						next_el = curr;
+						//printf("We found the first person\n");
+						//head_el->print();
 					}
 					else
 					{
 						next_el->next_select = curr;
+						next_el = curr;
 					}
 				}
 				curr = curr->next;
+				//printf("muuuuuuuuuuuuu\n");
 			}
 			if (next_el != nullptr) next_el->next_select = nullptr;
 			return head_el;
@@ -140,7 +148,9 @@ class list2
 			if (test->get_type() == command_type::select)
 			{
 				list2_node *head_new = nullptr;
+				//print_select(head_el);
 				head_new = sort(head_el, test->get_order_by());
+				//print_select(head_new);
 				ordering *order = test->get_order();
 				while (head_new != nullptr)
 				{
@@ -157,21 +167,30 @@ class list2
 					if (head == head_el)
 					{
 						head = head_el->next;
-						head->prev = nullptr;
+						if (head != nullptr) head->prev = nullptr;
 						curr = head_el->next_select;
-						delete[] head_el;
+						delete head_el;
 						head_el = curr;
 					}
 					else
 					{
-						head_el->prev->next = head_el->next;
-						head_el->next->prev = head_el->prev;
+						if (head_el->prev != nullptr) head_el->prev->next = head_el->next;
+						if (head_el->next != nullptr) head_el->next->prev = head_el->prev;
 						curr = head_el->next_select;
-						delete[] head_el;
+						delete head_el;
 						head_el = curr;
 					}
 				}
 				return;
+			}
+		}
+
+		static void print_select(list2_node *head)
+		{
+			while (head != nullptr)
+			{
+				head->print();
+				head = head->next_select;
 			}
 		}
 
@@ -260,22 +279,22 @@ class list2
 			return head;
 		}
 
-		// void print (unsigned int r = 10, FILE *fp = stdout)
-		// {
-		// 	list2_node *curr;
-		// 	unsigned int i = 0;
-		// 	for (i = 0, curr = head; curr != nullptr && i < r; curr = curr->get_next(), i++)
-		// 	{
-		// 		curr->print(fp);
-		// 	}
-		// }
+		void print ()
+		{
+			list2_node *curr;
+			unsigned int i = 0;
+			for (i = 0, curr = head; curr != nullptr; curr = curr->get_next(), i++)
+			{
+				curr->print();
+			}
+		}
 
 
 		void add_value(command * test)
 		{
 			list2_node *curr = head;
 			head = new list2_node;
-			head->next = curr;
+			if (curr != nullptr) head->next = curr;
 			curr->prev = head;
 			// head->set_group(test->get_group());
 			// head->set_phone(test->get_phone());

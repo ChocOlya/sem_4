@@ -46,10 +46,12 @@ int main(int argc, char const *argv[])
 		return -1;
 	}
 	fclose(fp);
+	//list.print();
 	int kol = 0;
 	t = clock();
 	command_type COM = command_type::none;
 	command test;
+	razbor HELP;
 	bool err = true;
 	
 	while (fgets(buf, LEN, stdin) != nullptr)
@@ -58,10 +60,21 @@ int main(int argc, char const *argv[])
 		err = true;
 		while ((s = strtok_r(s, ";", &end)))
 		{
+			//printf("s = %s\n", s);
 			if ((err = test.read_command(s)) != true)
+			{
 				printf("Comand is not right\n");
+				s = end;
+				continue;
+			}
+			test.print();
 			COM = test.get_type();
 			list2_node *head = nullptr; 
+			if (test.like())
+			{
+				HELP.read(test.get_name());
+				//printf("LIKE\n");
+			}
 			switch(COM)
 			{
 				case command_type::quit:
@@ -74,8 +87,11 @@ int main(int argc, char const *argv[])
 				break;
 				case command_type::select:
 				case command_type:: del:
-				head = list.apply(&test, kol);
+				//printf("miu1\n");
+				head = list.apply(&test, kol, &HELP);
+				//printf("miu2\n");
 				list.do_st(head, &test);
+				//printf("miu3\n");
 				case command_type::none:
 				break;
 

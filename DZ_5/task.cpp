@@ -67,7 +67,7 @@ int main(int argc, char const *argv[])
 				s = end;
 				continue;
 			}
-			test.print();
+			//test.print();
 			COM = test.get_type();
 			list2_node *head = nullptr; 
 			if (test.like())

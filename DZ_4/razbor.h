@@ -32,9 +32,14 @@ bool check(const char *str, char * m, char * s, char * l, char *r)
 			//printf("biaka\n");
 			if (m[i + 1] == '\0') return true;//если процентик стоял в конце - все ок
 			//printf("biaka2\n");
-			for(int j = i; m[j]; j++)
+			for(int j = 0; str[i + j]; j++)
 			{
-				if (check(str + j, m + j + 1, s + j + 1, l + j + 1, r + j + 1)) return true;
+				if (check(str + i + j, m + i + 1, s + i + 1, l + i + 1, r + i + 1)) 
+				{
+					//printf("in %s (mask = %s) it means %d of simbols\n", str, m + i,  j);
+					return true;
+				}
+				//else printf("not j = %d\n", j);
 			} 
 			return false;
 		}
@@ -252,7 +257,7 @@ class razbor
 			buf[k] = '\0';
 			buf_min[k] = '\0';
 			buf_max[k] = '\0';
-			printf("MASK %s\nSence %s\nMin %s\nMax %s\n", buf_m, buf, buf_min, buf_max);
+			//printf("MASK %s\nSence %s\nMin %s\nMax %s\n", buf_m, buf, buf_min, buf_max);
 			erase ();
 			return init (buf_m, buf, buf_min, buf_max);
 		}

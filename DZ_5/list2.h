@@ -34,6 +34,7 @@ class list2_node : public record
 			r.prev = nullptr;
 			return (list2_node&&)*this;
 		}
+		
 		list2_node * get_next () const
 		{
 			return next;
@@ -278,7 +279,7 @@ class list2
 			curr->prev = head;
 			// head->set_group(test->get_group());
 			// head->set_phone(test->get_phone());
-			head = std::static_cast<record&&>(test);
+			*(record*)head = static_cast<record&&>(*test);
 			return;
 
 

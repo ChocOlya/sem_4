@@ -6,7 +6,7 @@
 
 int main(int argc, char const *argv[])
 {
-	io_status err = io_status::success;
+	io_status er = io_status::success;
 	const char *name_in = 0;
 	char buf [LEN];
 	double t;
@@ -26,9 +26,9 @@ int main(int argc, char const *argv[])
 		return -1;
 	}
 
-	if ((err  = list.read(fp))!= io_status::success)
+	if ((er  = list.read(fp))!= io_status::success)
 	{
-		switch(err)
+		switch(er)
 		{
 			case io_status::success:
 			case io_status::eof:
@@ -56,12 +56,12 @@ int main(int argc, char const *argv[])
 	{
 		char *s = buf, *end = nullptr;
 		err = true;
-		while ((s = strtok_r(s, ";", end)))
+		while ((s = strtok_r(s, ";", &end)))
 		{
-			if ((err = test->read_command) != true)
+			if ((err = test.read_command(s)) != true)
 				printf("Comand is not right\n");
-			COM = test->get_type();
-			list_node *head = nullptr; 
+			COM = test.get_type();
+			list2_node *head = nullptr; 
 			switch(COM)
 			{
 				case command_type::quit:
@@ -70,12 +70,12 @@ int main(int argc, char const *argv[])
 				return 0;
 				
 				case command_type::insert:
-				list->add_value(test);
+				list.add_value(&test);
 				break;
 				case command_type::select:
 				case command_type:: del:
-				head = list->apply(test, kol);
-				list->do_st(head, test);
+				head = list.apply(&test, kol);
+				list.do_st(head, &test);
 				case command_type::none:
 				break;
 

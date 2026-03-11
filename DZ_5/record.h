@@ -23,37 +23,6 @@ enum class io_status
 
 
 
-int cmp(record x, record y, ordering *place);
-int cmp(record x, record y, ordering *place)
-{
-	int res = 0;
-	if (res = cmp_0(x, y, place[0])) return res;
-	if (res = cmp_0(x, y, place[1])) return res;
-	return cmp_0(x, y, place[2]);
-	
-}
-
-
-
-int cmp_0(record x, record y, ordering o)
-{
-	switch (o)
-	{
-		case ordering::name:
-		return strcmp(x.get_name(), y.get_name());
-		case ordering::phone:
-		return x.get_phone() - y.get_phone();
-		case ordering::group:
-		return x.get_group() - y.get_group();
-		case ordering::none:
-		return 0;
-	}
-	return 0;
-}
-
-
-
-
 
 class record
 {
@@ -227,6 +196,43 @@ class record
 		}
 
 };
+
+
+
+
+
+
+int cmp(record& x, record& y, ordering *place);
+int cmp_0(record& x, record& y, ordering o);
+int cmp(record& x, record& y, ordering *place)
+{
+	int res = 0;
+	if ((res = cmp_0(x, y, place[0])) != 0) return res;
+	if ((res = cmp_0(x, y, place[1])) != 0) return res;
+	return cmp_0(x, y, place[2]);
+	
+}
+
+
+
+int cmp_0(record& x, record& y, ordering o)
+{
+	switch (o)
+	{
+		case ordering::name:
+		return strcmp(x.get_name(), y.get_name());
+		case ordering::phone:
+		return x.get_phone() - y.get_phone();
+		case ordering::group:
+		return x.get_group() - y.get_group();
+		case ordering::none:
+		return 0;
+	}
+	return 0;
+}
+
+
+
 
 
 # endif

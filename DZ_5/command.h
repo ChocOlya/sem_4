@@ -4,6 +4,9 @@
 # include "record.h"
 # include "operation.h"
 # include "ordering.h"
+# include "command_type.h"
+
+
 
 
 
@@ -11,7 +14,7 @@
 bool where (char * s);
 bool read_or(ordering *place, char * s, int i);
 bool read_nach(char *s, ordering *place, char ** end);
-bool read_ending(char *s, ordering *plase);
+bool read_ending(char *s, ordering *place);
 bool check_com(command_type f, char *con, char *who, char **end2);
 
 bool where (char * s)
@@ -78,20 +81,21 @@ bool check_com(command_type f, char *con, char *who, char **end2)
 
 
 
-bool read_ending(char *s, ordering *plase)
+bool read_ending(char *s, ordering *place)
 {
-	s = strtok_r(s, " ,\t\n", end);
+	char *end = nullptr;
+	s = strtok_r(s, " ,\t\n", &end);
 	if (s == nullptr) return false;
 	//printf("%s\n", s);	
 	if (read_or(place, s, 0) == false) return false;
-	s = strtok_r(*end, " ,\t\n", end);
+	s = strtok_r(end, " ,\t\n", &end);
 	if (s == nullptr) return true;	
 	if (read_or(place, s, 1) == false) return false;
-	s = strtok_r(*end, " ,\t\n", end);
+	s = strtok_r(end, " ,\t\n", &end);
 	if (s == nullptr) return true;
 	//printf("%s\n", s);
 	if (read_or(place, s, 2) == false) return false;
-	s = strtok_r(*end, " ,\t\n", end);
+	s = strtok_r(end, " ,\t\n", &end);
 	if (s == nullptr) return true;
 	return false;
 }
@@ -134,6 +138,7 @@ bool read_nach(char *s, ordering *place, char ** end)
 
 
 
+
 class command : public record
 {
 	private:
@@ -160,6 +165,14 @@ class command : public record
 		{ return type; }
 
 
+		ordering * get_order()
+		{ return order; }
+
+
+		ordering * get_order_by()
+		{ return order_by; }
+
+
 		bool read_command(char *s)
 		{
 			this->erase_command();
@@ -178,7 +191,7 @@ class command : public record
 				//read name
 				s = strtok_r(end, " \t\n", &end);
 				if (s == nullptr) return false;
-				if (this->set_name(where) != true) return false;
+				if (this->set_name(s) != true) return false;
 
 				//read phone
 				s = strtok_r(end, " \t\n", &end);
@@ -201,7 +214,7 @@ class command : public record
 				char *end1 = nullptr, *end2 = nullptr;
 				if (read_nach(end, order, &end1) == false) return false;
 				if (this->parse(end1, &end2) == false) return false;
-				if (this ->ending(end2, order_by) == false) return false;
+				if (read_ending(end2, order_by) == false) return false;
 				return true;
 			}
 			if (strcmp(start, "delete") == 0)
@@ -214,6 +227,7 @@ class command : public record
 				if (this->parse(end, &end2) == false) return false;
 				return true;
 			}
+			return false;
 
 		}
 
@@ -509,7 +523,7 @@ class command : public record
 			c_group = condition::none;
 			op = operation::none;
 
-			for (int i = 0, i < max_items; order[i] = ordering::none, order_by[i] = ordering::none, i++);
+			for (int i = 0; i < max_items; order[i] = ordering::none, order_by[i] = ordering::none, i++);
 		}
 
 
@@ -545,4 +559,13 @@ class command : public record
 			return true;
 		}
 };
+
+
+
+
+
+
+
+
+
 # endif

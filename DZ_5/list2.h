@@ -107,16 +107,16 @@ class list2
 			}
 			return io_status::success;
 		}
-		list2_node * apply(comand test, int& kol)
+		list2_node * apply(command* test, int& kol)
 		{
 			list2_node *curr = head;
 			list2_node *head_el = nullptr;
 			list2_node *next_el = nullptr;
 			while(curr != nullptr)
 			{	
-				if (test.apply(*curr) == true)
+				if (test->apply(*curr) == true)
 				{
-					if (type == comand_type::select) kol++;
+					if (test->get_type() == command_type::select) kol++;
 					if (head_el == nullptr)
 					{
 						head_el = curr;
@@ -133,12 +133,12 @@ class list2
 			return head_el;
 		}
 
-		void do_st(list2_node *head_el, command test)
+		void do_st(list2_node *head_el, command* test)
 		{
 
-			if (test->get_type() == comand_type::select)
+			if (test->get_type() == command_type::select)
 			{
-				list2_node head_new = nullptr;
+				list2_node *head_new = nullptr;
 				head_new = sort(head_el, test->get_order_by());
 				ordering *order = test->get_order();
 				while (head_new != nullptr)
@@ -148,7 +148,7 @@ class list2
 				}
 				return;
 			}
-			if (test->get_type() == comand_type::del)
+			if (test->get_type() == command_type::del)
 			{
 				list2_node *curr = head_el;
 				while(head_el != nullptr)
@@ -175,17 +175,17 @@ class list2
 		}
 
 
-		static void sort(list2_node *head, ordering place)
+		static list2_node *sort(list2_node *head, ordering* place)
 		{
 			int len = 1, i = 0, len1 = 0, len2 = 0, kol = 0; 
-			list_node *start_sorted = nullptr, *end_sorted = nullptr, *ost = nullptr;
-			list_node *curr1 = head, *curr2 = nullptr, *pred_curr2 = nullptr;
-			list_node *start_pred = nullptr, *end_pred = nullptr;
+			list2_node *start_sorted = nullptr, *end_sorted = nullptr, *ost = nullptr;
+			list2_node *curr1 = head, *curr2 = nullptr, *pred_curr2 = nullptr;
+			list2_node *start_pred = nullptr, *end_pred = nullptr;
 
 
 
 			if(head == nullptr)
-				return;
+				return nullptr;
 			while (kol != 1)
 			{
 				kol = 0;
@@ -205,7 +205,7 @@ class list2
 					len2 = 0;//kolvo, written of the second
 					while(curr1 && curr2 && len1 < len && len2 < len)
 					{				
-						if (cmp(*curr1, *curr2) < 0)//(*curr1 < *curr2)
+						if (cmp(*curr1, *curr2, place) < 0)//(*curr1 < *curr2)
 						{
 							if (start_sorted == nullptr) 
 								start_sorted = curr1;
@@ -253,10 +253,10 @@ class list2
 				}		
 				
 				len *= 2;
-				return head;
+				
 			}
 			//printf("len = %d\n", len);
-
+			return head;
 		}
 
 		// void print (unsigned int r = 10, FILE *fp = stdout)
@@ -268,6 +268,21 @@ class list2
 		// 		curr->print(fp);
 		// 	}
 		// }
+
+
+		void add_value(command * test)
+		{
+			list2_node *curr = head;
+			head = new list2_node;
+			head->next = curr;
+			curr->prev = head;
+			// head->set_group(test->get_group());
+			// head->set_phone(test->get_phone());
+			head = std::static_cast<record&&>(test);
+			return;
+
+
+		}
 
 	private:
 		void delete_list()

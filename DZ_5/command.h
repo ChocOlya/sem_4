@@ -414,6 +414,7 @@ class command : public record
 			//printf("who %s\n", who);
 			if (who == nullptr) return 0; 
 			what = strtok_r(what, " \t\n", &where);
+			if (what == nullptr) return 0;
 			//printf("what %s\n", what);
 			if (this->read_com(who, what, where, &con) == false) return 0;
 			con = strtok_r(con, " \t\n", &who);
@@ -430,6 +431,7 @@ class command : public record
 			//printf("who %s\n", who);
 			if (who == nullptr) return 0; 
 			what = strtok_r(what, " \t\n", &where);
+			if (what == nullptr) return 0;
 			//printf("what %s\n", what);
 			if (this->read_com(who, what, where, &con) == false) return 0;
 			con = strtok_r(con, " \t\n", &who);
@@ -443,6 +445,7 @@ class command : public record
 			//printf("who %s\n", who);
 			if (who == nullptr) return 0; 
 			what = strtok_r(what, " \t\n", &where);
+			if (what == nullptr) return 0;
 			//printf("what %s\n", what);
 			if (this->read_com(who, what, where, &con) == false) return 0;
 			con = strtok_r(con, " \t\n", &who);

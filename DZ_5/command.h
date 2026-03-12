@@ -10,16 +10,30 @@
 
 
 
-
-bool where (char * s);
+bool where (char *s);
+int where_ord (char * s);
 bool read_or(ordering *place, char * s, int i);
-bool read_nach(char *s, ordering *place, char ** end);
+int read_nach(char *s, ordering *place, char ** end);
 bool read_ending(char *s, ordering *place);
-bool check_com(command_type f, char *con, char *who, char **end2);
+int check_com(command_type f, char *con, char *who, char **end2);
 
-bool where (char * s)
+bool where (char *s)
 {
 	if (strcmp(s, "where") == 0) return true;
+	return false;
+
+}
+
+
+int where_ord (char * s, char ** end)
+{
+	if (strcmp(s, "where") == 0) return 1;
+	if (strcmp(s, "order") == 0)
+	{
+		s = strtok_r(*end, " \t\n", end);
+		if (strcmp(s, "by") == 0) return 2;
+		return 0;
+	}
 	return false;
 }
 
@@ -60,23 +74,24 @@ bool read_or(ordering *place, char * s, int i)
 }
 
 
-bool check_com(command_type f, char *con, char *who, char **end2)
+int check_com(command_type f, char *con, char *who, char **end2)
 {
 	if (f == command_type::select)
 	{
 		if (strcmp(con, "order") == 0)
 		{
 			who = strtok_r(who, " \t\n", end2);
-			if (strcmp(who, "by") == 0) return true;
-			return false;
+			if (strcmp(who, "by") == 0) return 1;
+			return 0;
 		}
+		if(con == nullptr) return 2;
 	}
 	if (f == command_type::del)
 	{
 		//printf("wow\n");
-		if (con == nullptr) return true;
+		if (con == nullptr) return 1;
 	}
-	return false;
+	return 0;
 
 }
 
@@ -103,38 +118,34 @@ bool read_ending(char *s, ordering *place)
 
 
 
-bool read_nach(char *s, ordering *place, char ** end)
+int read_nach(char *s, ordering *place, char ** end)
 {
+	int res = 0;
 	s = strtok_r(s, " ,\t\n", end);
-	if (s == nullptr) return false;
+	if (s == nullptr) return 0;
 	//printf("%s\n", s);	
-	if (read_or(place, s, 0) == false) return false;
+	if (read_or(place, s, 0) == false) return 0;
 
 	s = strtok_r(*end, " ,\t\n", end);
-	if (s == nullptr) return false;	
+	if (s == nullptr) return 3;	
 	//printf("%s\n", s);
-	if (where(s) == false)
-	{
-		if (read_or(place, s, 1) == false) return false;
+	if ((res = where_ord(s, end)) != 0) return res;	
+	if (read_or(place, s, 1) == false) return 0;
 
 
-		s = strtok_r(*end, " ,\t\n", end);
-		if (s == nullptr) return false;
-		//printf("%s\n", s);
+	s = strtok_r(*end, " ,\t\n", end);
+	if (s == nullptr) return 3;
+	//printf("%s\n", s);
 
-		if (where(s) == false)
-		{
-			//printf("Case word word word where\n");
-			if (read_or(place, s, 2) == false) return false;
-			s = strtok_r(*end, " ,\t\n", end);
-			if (s == nullptr) return false;
-			//printf("%s\n", s);
-		}
-		//else printf("Case word word where\n");
-	}
-	//else printf("Case word where\n");
-	if (where(s) == false) return false;
-	return true;
+	if ((res = where_ord(s, end)) != 0) return res;
+
+	//printf("Case word word word where\n");
+	if (read_or(place, s, 2) == false) return false;
+	s = strtok_r(*end, " ,\t\n", end);
+	if (s == nullptr) return 3;
+	//printf("%s\n", s);
+	if ((res = where_ord(s, end)) != 0) return res;
+	return 0;
 }
 
 
@@ -217,14 +228,28 @@ class command : public record
 			if (strcmp(start, "select") == 0)
 			{
 				type = command_type::select;
+				int res = 0;
 				char *end1 = nullptr, *end2 = nullptr;
-				if (read_nach(end, order, &end1) == false) return false;
+				if ((res = read_nach(end, order, &end1)) == 0) return false;
 				//printf("We read the what filds should be printed\n");
-				if (this->parse(end1, &end2) == false) return false;
-				//printf("We read the uslovia poiska\n");
-				if (read_ending(end2, order_by) == false) return false;
-				//printf("where is the problem?\n");
-				return true;
+				if (res == 1)//where
+				{
+					if ((res = this->parse(end1, &end2)) == false) return false;
+					//printf("We read the uslovia poiska\n");
+					if (res == 2) return true;
+					if (read_ending(end2, order_by) == false) return false;
+					//printf("where is the problem?\n");
+					return true;
+				}
+
+				if (res == 2)//not where
+				{
+					if (read_ending(end1, order_by) == false) return false;
+					//printf("where is the problem?\n");
+					return true;
+				}
+				if (res == 3) return true;
+				
 			}
 			if (strcmp(start, "delete") == 0)
 			{
@@ -368,46 +393,47 @@ class command : public record
 
 		bool parse (char * string, char **end2)
 		{
+			int res = 0;
 			char *who = nullptr, *what = nullptr, *where = nullptr, *con = nullptr;
 			who = strtok_r(string, " \t\n", &what);
 			//printf("who %s\n", who);
-			if (who == nullptr) return false; 
+			if (who == nullptr) return 0; 
 			what = strtok_r(what, " \t\n", &where);
 			//printf("what %s\n", what);
-			if (this->read_com(who, what, where, &con) == false) return false;
+			if (this->read_com(who, what, where, &con) == false) return 0;
 			con = strtok_r(con, " \t\n", &who);
 			//printf("truble\n");
 			//if (con == nullptr) return true;
 			//printf("pupupupu0\n");
-			if (check_com(type, con, who, end2) == true) return true;
+			if ((res = check_com(type, con, who, end2)) != 0) return res;
 			//printf("op %s\n", con);
-			if(this->read_op(con) == false) return false;
+			if(this->read_op(con) == false) return 0;
 			//printf("pupupupu\n");
 
-			if (who == nullptr) return false;
+			if (who == nullptr) return 0;
 			who = strtok_r(who, " \t\n", &what);
 			//printf("who %s\n", who);
-			if (who == nullptr) return false; 
+			if (who == nullptr) return 0; 
 			what = strtok_r(what, " \t\n", &where);
 			//printf("what %s\n", what);
-			if (this->read_com(who, what, where, &con) == false) return false;
+			if (this->read_com(who, what, where, &con) == false) return 0;
 			con = strtok_r(con, " \t\n", &who);
 			//if (con == nullptr) return true;
-			if (check_com(type, con, who, end2) == true) return true;
+			if ((res = check_com(type, con, who, end2)) != 0) return res;
 			//printf("op %s\n", con);
-			if(this->read_op(con) == false) return false;
+			if(this->read_op(con) == false) return 0;
 
-			if (who == nullptr) return false;
+			if (who == nullptr) return 0;
 			who = strtok_r(who, " \t\n", &what);
 			//printf("who %s\n", who);
-			if (who == nullptr) return false; 
+			if (who == nullptr) return 0; 
 			what = strtok_r(what, " \t\n", &where);
 			//printf("what %s\n", what);
-			if (this->read_com(who, what, where, &con) == false) return false;
+			if (this->read_com(who, what, where, &con) == false) return 0;
 			con = strtok_r(con, " \t\n", &who);
 			//if (con == nullptr) return true;
-			if (check_com(type, con, who, end2) == true) return true;
-			return false;
+			if ((res = check_com(type, con, who, end2)) != 0) return res;
+			return 0;
 		}
 		bool like()
 		{

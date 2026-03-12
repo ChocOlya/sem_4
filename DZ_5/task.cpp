@@ -83,7 +83,7 @@ int main(int argc, char const *argv[])
 				return 0;
 				
 				case command_type::insert:
-				list.add_value(&test);
+				if(list.find(&test) == false) list.add_value(&test);
 				break;
 				case command_type::select:
 				case command_type:: del:

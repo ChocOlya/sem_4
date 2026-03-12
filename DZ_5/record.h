@@ -206,10 +206,14 @@ class record
 
 int cmp(record& x, record& y, ordering *place);
 int cmp_0(record& x, record& y, ordering o);
+bool equal(record&x, record&y);
 int cmp(record& x, record& y, ordering *place)
 {
 	int res = 0;
-	if ((res = cmp_0(x, y, place[0])) != 0) return res;
+	if ((res = cmp_0(x, y, place[0])) != 0) 
+	{
+		return res;
+	}
 	if ((res = cmp_0(x, y, place[1])) != 0) return res;
 	return cmp_0(x, y, place[2]);
 	
@@ -231,6 +235,15 @@ int cmp_0(record& x, record& y, ordering o)
 		return 0;
 	}
 	return 0;
+}
+
+
+bool equal(record&x, record&y)
+{
+	if (strcmp(x.get_name(), y.get_name()) == 0 &&
+	 x.get_phone() == y.get_phone() &&
+	 x.get_group() - y.get_group()) return true;
+	return false;
 }
 
 

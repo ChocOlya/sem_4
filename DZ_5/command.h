@@ -76,15 +76,29 @@ bool read_or(ordering *place, char * s, int i)
 
 int check_com(command_type f, char *con, char *who, char **end2)
 {
+	//printf("CHEEEK\n");
 	if (f == command_type::select)
 	{
+		//printf("hello\n");
+		if(con == nullptr) 
+		{
+			*end2 = who;
+			//printf("22222222\n");
+			return 2;
+		}
 		if (strcmp(con, "order") == 0)
 		{
+			//printf("case1\n");
 			who = strtok_r(who, " \t\n", end2);
-			if (strcmp(who, "by") == 0) return 1;
+			if (strcmp(who, "by") == 0) 
+			{
+				//printf("1111111\n");
+				return 1;
+			}
 			return 0;
 		}
-		if(con == nullptr) return 2;
+		
+		//printf("bad\n");
 	}
 	if (f == command_type::del)
 	{
@@ -205,20 +219,20 @@ class command : public record
 				//read name
 				s = strtok_r(end, " (,\t\n", &end);
 				if (s == nullptr) return false;
-				printf("name = %s\n", s);
+				//printf("name = %s\n", s);
 				if (this->set_name(s) != true) return false;
 
 				//read phone
 				s = strtok_r(end, " ,\t\n", &end);
 				if (s == nullptr) return false;
-				printf("phone = %s\n", s);
+				//printf("phone = %s\n", s);
 				int ph = 0;
 				if (sscanf(s, "%d", &ph) != 1) return false;
 				this->set_phone(ph);
 
 				//read group 
 				s = strtok_r(end, " ),\t\n", &end);
-				printf("group = %s\n", s);
+				//printf("group = %s\n", s);
 				if (s == nullptr) return false;
 				int gr = 0;
 				if (sscanf(s, "%d", &gr) != 1) return false;
@@ -234,8 +248,9 @@ class command : public record
 				//printf("We read the what filds should be printed\n");
 				if (res == 1)//where
 				{
-					if ((res = this->parse(end1, &end2)) == false) return false;
-					//printf("We read the uslovia poiska\n");
+					//printf("read where\n");
+					if ((res = this->parse(end1, &end2)) == 0) return false;
+					//printf("We read the uslovia poiska %d\n", res);
 					if (res == 2) return true;
 					if (read_ending(end2, order_by) == false) return false;
 					//printf("where is the problem?\n");
@@ -248,7 +263,7 @@ class command : public record
 					//printf("where is the problem?\n");
 					return true;
 				}
-				if (res == 3) return true;
+				if (res == 3) return true;//nth
 				
 			}
 			if (strcmp(start, "delete") == 0)
@@ -391,7 +406,7 @@ class command : public record
 			return false;
 		}
 
-		bool parse (char * string, char **end2)
+		int parse (char * string, char **end2)
 		{
 			int res = 0;
 			char *who = nullptr, *what = nullptr, *where = nullptr, *con = nullptr;
@@ -565,6 +580,29 @@ class command : public record
 				}
 				fprintf(fp, "%d\n", this->get_group());
 			}
+			printf("\n");
+		}
+		void print_order_by()
+		{
+			printf("Order by:\n");
+			for (int i = 0; i < max_items; i++)
+			{
+				switch (order_by[i])
+				{
+					case ordering::none:
+					break;
+					case ordering::name:
+					printf(" name");
+					break;
+					case ordering::phone:
+					printf(" phone");
+					break;
+					case ordering::group:
+					printf(" group");
+					break;
+				}
+			}
+				
 			printf("\n");
 		}
 		

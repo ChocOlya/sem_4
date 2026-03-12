@@ -147,9 +147,14 @@ class list2
 
 			if (test->get_type() == command_type::select)
 			{
-				list2_node *head_new = nullptr;
+				list2_node *head_new = head_el;
 				//print_select(head_el);
-				head_new = sort(head_el, test->get_order_by());
+				ordering *oR = test->get_order_by();
+				if (oR[0] != ordering::none) 
+				{
+					//test->print_order_by();
+					head_new = sort(head_el, oR);
+				}
 				//print_select(head_new);
 				ordering *order = test->get_order();
 				while (head_new != nullptr)
@@ -157,6 +162,7 @@ class list2
 					head_new->print(order);
 					head_new = head_new->next_select;
 				}
+				printf("\n");
 				return;
 			}
 			if (test->get_type() == command_type::del)
@@ -192,6 +198,18 @@ class list2
 				head->print();
 				head = head->next_select;
 			}
+		}
+
+
+		bool find(command *test)
+		{
+			list2_node *curr = head;
+			while (curr != nullptr)
+			{
+				if (equal(*curr, *test) == true) return true;
+				curr = curr->next;
+			}
+			return false;
 		}
 
 

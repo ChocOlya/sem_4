@@ -1,0 +1,134 @@
+ Alice 111 1
+ Bob 222 2
+ Clara 333 1
+ David 444 3
+ Egor 555 2
+ Ann 777 1
+ Boris 888 3
+ Carl 999 2
+ A% 1000 4
+ A_ 1001 4
+ A1 1002 4
+ A2 1003 4
+ A3 1004 4
+ AB 1005 4
+ Alice 111 2
+ Alice 222 1
+ Zed 50 9
+
+ Bob 222
+ Egor 555
+ Carl 999
+ Alice 111
+
+ A% 4
+ A1 4
+ A2 4
+ A3 4
+ AB 4
+ A_ 4
+ Ann 1
+ Boris 3
+ Carl 2
+ Clara 1
+ David 3
+ Egor 2
+
+ Alice 111 1
+ Ann 777 1
+ A% 1000 4
+ A_ 1001 4
+ A1 1002 4
+ A2 1003 4
+ A3 1004 4
+ AB 1005 4
+ Alice 111 2
+ Alice 222 1
+
+ A% 1000 4
+ A_ 1001 4
+ A1 1002 4
+ A2 1003 4
+ A3 1004 4
+ AB 1005 4
+
+ A% 1000 4
+
+ A_ 1001 4
+
+ A1 1002 4
+ A2 1003 4
+ A3 1004 4
+
+ Alice 111 1
+ Clara 333 1
+ David 444 3
+ Egor 555 2
+ Ann 777 1
+ Carl 999 2
+ A% 1000 4
+ A_ 1001 4
+ A1 1002 4
+ A2 1003 4
+ A3 1004 4
+ AB 1005 4
+ Alice 111 2
+ Alice 222 1
+ Zed 50 9
+
+ Alice 111 1
+ Alice 222 1
+
+ Alice 111 1
+ Alice 111 2
+ Alice 222 1
+ Zed 50 9
+
+ A% 1000 4
+ A1 1002 4
+ A2 1003 4
+ A3 1004 4
+ AB 1005 4
+ A_ 1001 4
+ Alice 111 1
+ Alice 111 2
+ Alice 222 1
+ Ann 777 1
+ Bob 222 2
+ Boris 888 3
+ Carl 999 2
+ Clara 333 1
+ David 444 3
+ Egor 555 2
+ Zed 50 9
+
+ Masha 12345 4
+
+ A% 1000 4
+ A1 1002 4
+ A2 1003 4
+ A3 1004 4
+ AB 1005 4
+ A_ 1001 4
+ Alice 111 1
+ Alice 111 2
+ Alice 222 1
+ Ann 777 1
+ Bob 222 2
+ Carl 999 2
+ Clara 333 1
+ Egor 555 2
+ Masha 12345 4
+ Zed 50 9
+
+ Alice 222 1
+
+ Alice 222 1
+ Ann 777 1
+ Bob 222 2
+ Carl 999 2
+ Clara 333 1
+ Egor 555 2
+
+
+./a.out : Result = 116 Elapsed = 0.00

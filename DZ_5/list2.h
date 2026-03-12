@@ -209,6 +209,7 @@ class list2
 				if (equal(*curr, *test) == true) return true;
 				curr = curr->next;
 			}
+			//printf("FALSE\n");
 			return false;
 		}
 
@@ -312,8 +313,8 @@ class list2
 		{
 			list2_node *curr = head;
 			head = new list2_node;
-			if (curr != nullptr) head->next = curr;
-			curr->prev = head;
+			head->next = curr;
+			if (curr != nullptr) curr->prev = head;
 			// head->set_group(test->get_group());
 			// head->set_phone(test->get_phone());
 			*(record*)head = static_cast<record&&>(*test);

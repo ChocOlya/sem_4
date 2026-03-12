@@ -242,7 +242,7 @@ bool equal(record&x, record&y)
 {
 	if (strcmp(x.get_name(), y.get_name()) == 0 &&
 	 x.get_phone() == y.get_phone() &&
-	 x.get_group() - y.get_group()) return true;
+	 x.get_group() == y.get_group()) return true;
 	return false;
 }
 

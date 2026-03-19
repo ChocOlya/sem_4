@@ -551,7 +551,7 @@ class avl_tree
 			{
 				bool what = curr->del_el(x);
 				if (what == false) return curr;//we should not delete the vershina
-				printf("WE NEED TO DELETE IT\n");
+				//printf("WE NEED TO DELETE IT\n");
 				if (curr->left == nullptr)
 				{
 					avl_tree_node *ret = curr->right;
@@ -570,7 +570,7 @@ class avl_tree
 				int bal = curr->balance;
 				delete curr;
 				curr = nullptr;
-				printf("well, deleted want to find the biggest in left side\n");
+				//printf("well, deleted want to find the biggest in left side\n");
 				pupu = delete_the_end(pupu, delta0, &curr);
 				//pupu->print();
 				// curr->print();
@@ -601,8 +601,8 @@ class avl_tree
 			if (curr->right == nullptr)
 			{
 				*where = curr;
-				printf("We got the biggest ");
-				curr->print();
+				// printf("We got the biggest ");
+				// curr->print();
 				delta0 = 1;
 				curr = curr->left;
 				return curr;

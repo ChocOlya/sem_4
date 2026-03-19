@@ -114,9 +114,9 @@ int main(int argc, char const *argv[])
 				case command_type::select:
 				case command_type:: del:
 					//printf("miu1\n");
-					head = list.apply(K, &test, kol, garden, &HELP);
+					head = list.apply(K, &test, garden, &HELP);
 					//printf("miu2\n");
-					list.do_st(K, head, &test, garden);
+					list.do_st(K, head, &test, garden, kol);
 					//printf("miu3\n");
 					break;
 				case command_type::none:

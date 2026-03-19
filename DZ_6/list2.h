@@ -57,10 +57,9 @@ class list2
 			}
 			return io_status::success;
 		}
-		list2_node * apply(int K, command* test, int& kol, avl_tree * garden, razbor *HELP = nullptr)
+		list2_node * apply(int K, command* test, avl_tree * garden, razbor *HELP = nullptr)
 		{
 			list2_node *curr = head;
-			command_type t = test->get_type();
 			list2_node *head_el = nullptr;
 			list2_node *next_el = nullptr;
 			//printf("buuu0\n");
@@ -80,7 +79,6 @@ class list2
 					if (test->apply(*curr, HELP) == true)
 					{
 						//printf("buuu\n");
-						if (t == command_type::select) kol++;
 						if (head_el == nullptr)
 						{
 							head_el = curr;
@@ -103,7 +101,7 @@ class list2
 			return nullptr;
 		}
 
-		void do_st(int K, list2_node *head_el, command* test, avl_tree * garden)
+		void do_st(int K, list2_node *head_el, command* test, avl_tree * garden, int& kol)
 		{
 
 			if (test->get_type() == command_type::select)
@@ -120,6 +118,7 @@ class list2
 				ordering *order = test->get_order();
 				while (head_new != nullptr)
 				{
+					kol++;
 					head_new->print(order);
 					head_new = head_new->next_select;
 				}
@@ -316,7 +315,7 @@ class list2
 			list2_node *el = garden[hash_f(K, *test)].read_record(*test);//find in tree and retern lis2_node where it would lie
 			if (el == nullptr) return;
 			el->next = head;
-			head->prev = el;
+			if (head != nullptr) head->prev = el;
 			head = el;
 		}
 

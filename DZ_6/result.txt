@@ -23,11 +23,6 @@
  B_ 888 202
  A% 999 201
 
-WE NEED TO DELETE IT
-well, deleted want to find the biggest in left side
-We got the biggest  0 Navalny 228 109
-WE NEED TO DELETE IT
-WE NEED TO DELETE IT
  228
 
  Bob 456 102
@@ -164,4 +159,4 @@ WE NEED TO DELETE IT
 
  101 Alice
 
-./a.out : Result = 137 Elapsed = 0.00
+./a.out : Result = 140 Elapsed = 0.00

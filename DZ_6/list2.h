@@ -147,6 +147,9 @@ class list2
 						if (head_el->prev != nullptr) head_el->prev->next = head_el->next;
 						if (head_el->next != nullptr) head_el->next->prev = head_el->prev;
 						curr = head_el->next_select;
+						printf("Delete the member ");
+						head_el->print();
+						garden[hash_f(*head_el)].delete_node(head_el);
 						delete head_el;
 						head_el = curr;
 					}

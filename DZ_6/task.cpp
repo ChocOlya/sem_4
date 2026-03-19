@@ -88,7 +88,7 @@ int main(int argc, char const *argv[])
 				return 0;
 				
 				case command_type::insert:
-				if(list.find(&test) == false) list.add_value(&test);
+				list.insert(&test, garden);
 				break;
 				case command_type::select:
 				case command_type:: del:
@@ -107,6 +107,8 @@ int main(int argc, char const *argv[])
 		if (err != true) printf("Comand is not right\n");
 	}
 	printf("There was not the command quit\n");
+	t = (clock()-t)/CLOCKS_PER_SEC;
+	printf ("%s : Result = %d Elapsed = %.2f\n", argv[0], kol, t);
 	return 0;
 }
 

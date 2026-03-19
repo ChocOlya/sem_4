@@ -145,9 +145,18 @@ class avl_tree_node
 			return false;
 		}
 
-		void set_el(list2_node * curr)
+		list2_node *set_el(record& x, list2_node * curr)
 		{
-			if (el == nullptr) el = curr;
+			if (el == nullptr) 
+			{
+				if (curr == nullptr)
+				{
+					curr = new list2_node;
+					*(record*)curr = static_cast<record&&>(x);
+				}
+				el = curr;
+				return curr;
+			}
 			else
 			{
 				if (head != nullptr)//there already was the list
@@ -155,22 +164,34 @@ class avl_tree_node
 					list_node *miu = head;
 					for (; miu != nullptr; miu = miu->next_)
 					{
-						if (equal_ph_g(*curr, *(miu->el))) return;//there is curr in struct
+						if (equal_ph_g(x, *(miu->el))) return nullptr;//there is curr in struct
 					}
 
 					list_node * now = new list_node;
+					if (curr == nullptr)
+					{
+						curr = new list2_node;
+						*(record*)curr = static_cast<record&&>(x);
+					}
 					now->el = curr;
 					now->next_ = head;
 					head = now;
+					return curr;
 				}
 				else
 				{
-					if (equal_ph_g(*el, *curr)) return;
+					if (equal_ph_g(*el, x)) return nullptr;
 					list_node * now = new list_node;
 					now->el = el;;
 					head = new list_node;
+					if (curr == nullptr)
+					{
+						curr = new list2_node;
+						*(record*)curr = static_cast<record&&>(x);
+					}
 					head->el = curr;
 					head->next_ = now;
+					return curr;
 				}
 			}
 		}
@@ -221,10 +242,22 @@ class avl_tree
 
 		void read (list2_node * curr)
 		{ 
-			root = add_node(curr);
+			list2_node *ret = nullptr;
+			root = add_node(*curr, &ret, curr);
 				// this->print(5);
 				// printf("\n\n\n\n\n\n\n");
 		}
+
+
+		list2_node * read_record(record& x)
+		{
+			list2_node *ret = nullptr;
+			root = add_node(x, &ret);
+			return ret;
+		}
+
+
+
 		void print (int r, FILE *fp = stdout)
 		{
 			print_subtree (root, 0, r, fp);
@@ -239,30 +272,38 @@ class avl_tree
 			delete curr;
 		}
 
-		avl_tree_node * add_node(list2_node * curr)
+
+		avl_tree_node * add_node(record& x, list2_node **res, list2_node *curr = nullptr)
 		{
 			int delta = 0;
 			if (root == nullptr)
 			{
 				avl_tree_node * y = new avl_tree_node;
+				if (curr == nullptr)
+				{
+					curr = new list2_node;
+					*(record*)curr = static_cast<record&&>(x);
+				}
 				y->el = curr;
+				*res = curr;
 				root = y;
 				root->balance = 0;
 				return root;
 			}
 			// printf("I wanted to add ");	
 			// y->print();
-			return add_avl_subtree(root, curr, delta);
+			return add_avl_subtree(root, x, curr, delta, res);
 		}
 
-		static avl_tree_node* add_avl_subtree(avl_tree_node *curr, list2_node *x, int& delta0)
+		static avl_tree_node* add_avl_subtree(avl_tree_node *curr, record& who, list2_node *x, int& delta0, list2_node** res)
 		{
-			if (*x < *curr->el)//<
+			int re = strcmp(who.get_name(), curr->el->get_name());
+			if (re < 0)//<
 			{
 				if (curr->left == nullptr)
 				{
 					avl_tree_node * y = new avl_tree_node;
-					y->el = x;
+					*res = y->set_el(who, x);
 					curr->left = y;
 					curr->balance = curr->balance - 1;
 					if (curr->balance == -1) delta0 = 1;
@@ -271,7 +312,7 @@ class avl_tree
 				}
 				else
 				{
-					curr->left = add_avl_subtree(curr->left, x, delta0);
+					curr->left = add_avl_subtree(curr->left, who, x, delta0, res);
 					if (delta0 == 0) return curr;
 					curr->balance = curr->balance - delta0;
 					if (curr->balance == -1) delta0 = 1;
@@ -284,12 +325,12 @@ class avl_tree
 
 				}
 			}
-			else if (*x > *curr->el)
+			else if (re > 0)
 			{
 				if (curr->right == nullptr)
 				{
 					avl_tree_node *y = new avl_tree_node;
-					y->el = x;
+					*res = y->set_el(who, x);
 					curr->right = y;
 					curr->balance = curr->balance + 1;
 					if (curr->balance == 1) delta0 = 1;
@@ -297,7 +338,7 @@ class avl_tree
 				}
 				else
 				{
-					curr->right = add_avl_subtree(curr->right, x, delta0);
+					curr->right = add_avl_subtree(curr->right, who, x, delta0, res);
 					if (delta0 == 0) return curr;
 					curr->balance = curr->balance + delta0;
 					if (curr->balance == 1) delta0 = 1;
@@ -312,7 +353,7 @@ class avl_tree
 			}
 			else
 			{
-				curr->set_el(x);
+				*res = curr->set_el(who, x);
 				return curr;
 			}
 			return curr;
@@ -479,7 +520,7 @@ class avl_tree
 				}
 				else
 				{
-					curr->right = add_avl_subtree(curr->right, x, delta0);
+					curr->right = delete_avl_subtree(curr->right, x, delta0);
 					if (delta0 == 0) return curr;
 					curr->balance = curr->balance - delta0;/// vetka in right subtree became less
 					//curr->ballance could be -2 or -1 or 0
@@ -497,6 +538,7 @@ class avl_tree
 			{
 				bool what = curr->del_el(x);
 				if (what == false) return curr;//we should not delete the vershina
+				printf("WE NEED TO DELETE IT\n");
 				if (curr->left == nullptr)
 				{
 					avl_tree_node *ret = curr->right;
@@ -515,6 +557,7 @@ class avl_tree
 				int bal = curr->balance;
 				delete curr;
 				curr = nullptr;
+				printf("well, deleted want to find the biggest in left side\n");
 				pupu = delete_the_end(pupu, delta0, &curr);
 				curr->left = pupu;//we reterned the new root of left sabtree
 				curr->right = pupu2;
@@ -566,7 +609,7 @@ class avl_tree
 		static avl_tree_node * find(avl_tree_node *curr, const char * s)
 		{
 			if (curr == nullptr) return nullptr;
-			int res = strcmp(s, curr->el->get_name()) > 0;
+			int res = strcmp(s, curr->el->get_name());
 			if (res > 0) return find(curr->right, s);
 			if (res < 0) return find(curr->left, s);
 			return curr; // names are equal
@@ -578,6 +621,7 @@ class avl_tree
 			list2_node *result = nullptr;
 			const char *s = test->get_name();
 			avl_tree_node *where = find(root, s);
+			if (where == nullptr) return nullptr;
 			if (where->head == nullptr)
 			{
 				if (test->apply_ph_and_gr(*(where->el)))//////////NEED TO CHANGE

@@ -122,6 +122,8 @@ class avl_tree_node
 							curr->next_ = nullptr;
 							curr->el = nullptr;
 							delete curr;
+							// printf("well\n");
+							break;
 						}
 						else 
 						{
@@ -129,6 +131,7 @@ class avl_tree_node
 							curr->el = nullptr;
 							curr->next_ = nullptr;
 							delete curr;
+							break;
 						}
 					}
 				}
@@ -210,8 +213,14 @@ class avl_tree_node
 		{
 			if (balance == 1 || balance == 0) fprintf(fp, " ");
 			fprintf(fp, "%d ", balance);
-			
-			el->print(nullptr, fp);
+			if (head == nullptr) el->print(nullptr, fp);
+			else
+			{
+				printf( "%ss:\n", el->get_name());
+				list_node *curr = head;
+				for(; curr; curr= curr->next_)
+					(curr->el)->print(nullptr, fp);
+			}
 
 		}
 	private:
@@ -258,7 +267,7 @@ class avl_tree
 
 
 
-		void print (int r, FILE *fp = stdout)
+		void print (int r = 10, FILE *fp = stdout)
 		{
 			print_subtree (root, 0, r, fp);
 		}
@@ -369,27 +378,28 @@ class avl_tree
 			delta0 = 0;
 			if (B->balance == 0) 
 			{
-				//printf("AAAAAAAAAAAA?\n");
-				curr = B;
+				//printf("CASE 0!\n");
 				delta0 = 1;
 				A->left = B->right;
 				B->right = A;
+
 				A->balance = -1;
 				B->balance = 1;
+				return B;
 
 			}
 			if (B->balance == -1)
 			{
-				//printf("first\n");
-				curr = B;
+				//printf("CASE 1!\n");
 				B->balance = 0;
 				A->balance = 0;
 				A->left = B->right;
 				B->right = A;
+				return B;
 			}
 			else//1
 			{
-				//printf("second\n");
+				//printf("CASE -1!\n");
 				curr = B->right;//C
 				if (curr->balance == 0)
 				{
@@ -411,6 +421,7 @@ class avl_tree
 				A->left= curr->right;
 				curr->left = B;
 				curr->right = A;
+				return curr;
 			}
 			return curr;
 
@@ -426,27 +437,27 @@ class avl_tree
 			delta0 = 0;
 			if (B->balance == 0) 
 			{
-				//printf("AAAAAAAAAAAA?\n");
-				curr = B;
+				//printf("CASE 0!\n");
 				A->right = B->left;
 				B->left = A;
 				A->balance = 1;
 				B->balance = -1;
 				delta0 = 1;
+				return B;
 
 			}
 			if (B->balance == 1)
 			{
-				//printf("first\n");
-				curr = B;
+				//printf("CASE 1!\n");
 				B->balance = 0;
 				A->balance = 0;
 				A->right = B->left;
 				B->left = A;
+				return B;
 			}
 			else//-1
 			{
-				//printf("second\n");
+				//printf("CASE -1!\n");
 				curr = B->left;//C
 				if (curr->balance == 0)
 				{
@@ -468,19 +479,21 @@ class avl_tree
 				A->right= curr->left;
 				curr->right = B;
 				curr->left = A;
+				return curr;
 			}
 			return curr;
 		}
 
 
-		avl_tree_node * delete_node(list2_node * curr)
+		void delete_node(list2_node * curr)
 		{
 			int delta = 0;
 			if (root == nullptr)
 			{
-				return nullptr;
+				return;
 			}
-			return delete_avl_subtree(root, curr, delta);
+			root = delete_avl_subtree(root, curr, delta);
+			return;
 		}
 
 
@@ -505,7 +518,7 @@ class avl_tree
 					else
 					{
 						if (curr->balance == 2) curr = fix_right_subtree(curr, delta0);
-						delta0 = 0;// 0 -> 1
+						else delta0 = 0;// 0 -> 1
 					} 
 					return curr;
 
@@ -528,7 +541,7 @@ class avl_tree
 					else 
 					{
 						if (curr->balance == -2) curr = fix_left_subtree(curr, delta0);// -1 -> -2
-						delta0 = 0;//0 -> -1
+						else delta0 = 0;//0 -> -1
 					}
 					return curr;
 
@@ -559,6 +572,9 @@ class avl_tree
 				curr = nullptr;
 				printf("well, deleted want to find the biggest in left side\n");
 				pupu = delete_the_end(pupu, delta0, &curr);
+				//pupu->print();
+				// curr->print();
+				// pupu2->print();
 				curr->left = pupu;//we reterned the new root of left sabtree
 				curr->right = pupu2;
 				curr->balance = bal + delta0;
@@ -585,6 +601,9 @@ class avl_tree
 			if (curr->right == nullptr)
 			{
 				*where = curr;
+				printf("We got the biggest ");
+				curr->print();
+				delta0 = 1;
 				curr = curr->left;
 				return curr;
 			}
@@ -598,7 +617,7 @@ class avl_tree
 				else 
 				{
 					if (curr->balance == -2) curr = fix_left_subtree(curr, delta0);// -1 -> -2
-					delta0 = 0;//0 -> -1
+					else delta0 = 0;//0 -> -1
 				}
 				return curr;
 			}

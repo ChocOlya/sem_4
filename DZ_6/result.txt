@@ -1,0 +1,324 @@
+IN TREE
+ Alice 123 101
+
+NOT IN TREE
+ Test_123 111 206
+ Grace 111 107
+ David 123 104
+ Alice 123 101
+ Test%456 222 207
+ Henry 222 108
+ Navalny 228 109
+ Test[abc] 333 208
+ Ivan 333 109
+ Test^def 444 209
+ John 444 110
+ Eve 456 105
+ Test\\back 555 210
+ E\F 555 205
+ D^ 666 204
+ Tema 666 209
+ C[1-2] 777 203
+ Mamay 777 211
+ Frank 789 106
+ Charlie 789 103
+ B_ 888 202
+ A% 999 201
+
+NOT IN TREE
+Case2
+Delete the member Tema 666 209
+WE NEED TO DELETE IT
+well, deleted want to find the biggest in left side
+We got the biggest  0 Navalny 228 109
+ 0 Henry 222 108
+   0 David 123 104
+     0 Bob 456 102
+       0 Alice 123 101
+         0 A% 999 201
+         0 B_ 888 202
+       0 Charlie 789 103
+         0 C[1-2] 777 203
+         0 D^ 666 204
+    -1 Frank 789 106
+      -1 Eve 456 105
+         0 E\F 555 205
+       0 Grace 111 107
+  -1 Test[abc] 333 208
+     0 Mamay 777 211
+      -1 John 444 110
+         0 Ivan 333 109
+       1 Navalny 228 109
+         0 Test%456 222 207
+     0 Test^def 444 209
+       0 Test\\back 555 210
+       0 Test_123 111 206
+NOW:
+Navalny 228 109
+Mamay 777 211
+Alice 123 101
+Bob 456 102
+Charlie 789 103
+David 123 104
+Eve 456 105
+Frank 789 106
+Grace 111 107
+Henry 222 108
+Ivan 333 109
+John 444 110
+A% 999 201
+B_ 888 202
+C[1-2] 777 203
+D^ 666 204
+E\F 555 205
+Test_123 111 206
+Test%456 222 207
+Test[abc] 333 208
+Test^def 444 209
+Test\\back 555 210
+Case2
+Delete the member Ivan 333 109
+WE NEED TO DELETE IT
+ 0 Henry 222 108
+   0 David 123 104
+     0 Bob 456 102
+       0 Alice 123 101
+         0 A% 999 201
+         0 B_ 888 202
+       0 Charlie 789 103
+         0 C[1-2] 777 203
+         0 D^ 666 204
+    -1 Frank 789 106
+      -1 Eve 456 105
+         0 E\F 555 205
+       0 Grace 111 107
+  -1 Test[abc] 333 208
+     1 Mamay 777 211
+       0 John 444 110
+       1 Navalny 228 109
+         0 Test%456 222 207
+     0 Test^def 444 209
+       0 Test\\back 555 210
+       0 Test_123 111 206
+NOW:
+Navalny 228 109
+Mamay 777 211
+Alice 123 101
+Bob 456 102
+Charlie 789 103
+David 123 104
+Eve 456 105
+Frank 789 106
+Grace 111 107
+Henry 222 108
+John 444 110
+A% 999 201
+B_ 888 202
+C[1-2] 777 203
+D^ 666 204
+E\F 555 205
+Test_123 111 206
+Test%456 222 207
+Test[abc] 333 208
+Test^def 444 209
+Test\\back 555 210
+Case2
+Delete the member John 444 110
+WE NEED TO DELETE IT
+ 0 Henry 222 108
+   0 David 123 104
+     0 Bob 456 102
+       0 Alice 123 101
+         0 A% 999 201
+         0 B_ 888 202
+       0 Charlie 789 103
+         0 C[1-2] 777 203
+         0 D^ 666 204
+    -1 Frank 789 106
+      -1 Eve 456 105
+         0 E\F 555 205
+       0 Grace 111 107
+  -1 Test[abc] 333 208
+     0 Navalny 228 109
+       0 Mamay 777 211
+       0 Test%456 222 207
+     0 Test^def 444 209
+       0 Test\\back 555 210
+       0 Test_123 111 206
+NOW:
+Navalny 228 109
+Mamay 777 211
+Alice 123 101
+Bob 456 102
+Charlie 789 103
+David 123 104
+Eve 456 105
+Frank 789 106
+Grace 111 107
+Henry 222 108
+A% 999 201
+B_ 888 202
+C[1-2] 777 203
+D^ 666 204
+E\F 555 205
+Test_123 111 206
+Test%456 222 207
+Test[abc] 333 208
+Test^def 444 209
+Test\\back 555 210
+IN TREE
+ 228
+
+NOT IN TREE
+ Bob 456 102
+ Charlie 789 103
+ Eve 456 105
+ Frank 789 106
+ Henry 222 108
+ Navalny 228 109
+ A% 999 201
+ B_ 888 202
+ C[1-2] 777 203
+ D^ 666 204
+ E\F 555 205
+ Test%456 222 207
+ Test[abc] 333 208
+ Test^def 444 209
+ Test\\back 555 210
+ Mamay 777 211
+
+NOT IN TREE
+ 101
+ 102
+ 104
+ 105
+ 107
+ 108
+ 109
+ 207
+ 208
+ 209
+ 206
+
+NOT IN TREE
+ A% 999 201
+ B_ 888 202
+ Bob 456 102
+ C[1-2] 777 203
+ Charlie 789 103
+ D^ 666 204
+ David 123 104
+ E\F 555 205
+ Eve 456 105
+ Frank 789 106
+ Grace 111 107
+ Henry 222 108
+ Mamay 777 211
+ Navalny 228 109
+ Test%456 222 207
+ Test[abc] 333 208
+ Test\\back 555 210
+ Test^def 444 209
+ Test_123 111 206
+
+NOT IN TREE
+ A% 999 201
+ Alice 123 101
+
+NOT IN TREE
+ B_ 888 202
+
+NOT IN TREE
+ Charlie 789 103
+ David 123 104
+ Eve 456 105
+ Frank 789 106
+ Grace 111 107
+ Henry 222 108
+ C[1-2] 777 203
+ D^ 666 204
+ E\F 555 205
+
+NOT IN TREE
+ D^ 666 204
+ David 123 104
+ E\F 555 205
+ Eve 456 105
+ Frank 789 106
+ Grace 111 107
+ Henry 222 108
+ Mamay 777 211
+ Navalny 228 109
+ Test%456 222 207
+ Test[abc] 333 208
+ Test\\back 555 210
+ Test^def 444 209
+ Test_123 111 206
+
+NOT IN TREE
+ A% 999 201
+
+NOT IN TREE
+ B_ 888 202
+
+NOT IN TREE
+ C[1-2] 777 203
+
+NOT IN TREE
+
+NOT IN TREE
+ B_ 888 202
+ Bob 456 102
+ C[1-2] 777 203
+ Charlie 789 103
+ D^ 666 204
+ David 123 104
+ E\F 555 205
+ Eve 456 105
+ Frank 789 106
+ Grace 111 107
+ Henry 222 108
+ Mamay 777 211
+ Navalny 228 109
+ Test%456 222 207
+ Test[abc] 333 208
+ Test\\back 555 210
+ Test^def 444 209
+ Test_123 111 206
+
+NOT IN TREE
+ D^ 666 204
+ David 123 104
+ E\F 555 205
+ Eve 456 105
+ Frank 789 106
+ Grace 111 107
+ Henry 222 108
+ Mamay 777 211
+ Navalny 228 109
+ Test%456 222 207
+ Test[abc] 333 208
+ Test\\back 555 210
+ Test^def 444 209
+ Test_123 111 206
+
+NOT IN TREE
+ Alice 123 101
+
+NOT IN TREE
+ Alice 123 101
+
+NOT IN TREE
+ Alice 123 101
+ Bob 456 102
+
+NOT IN TREE
+ Alice 123 101
+ Bob 456 102
+ Charlie 789 103
+ Frank 789 106
+
+IN TREE
+ 101 Alice
+
+./a.out : Result = 137 Elapsed = 0.00

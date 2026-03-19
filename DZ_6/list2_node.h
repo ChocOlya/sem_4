@@ -1,6 +1,6 @@
 # ifndef LIST2_NODE
 # define LIST2_NODE
-#include "definition_of_k.h"
+//#include "definition_of_k.h"
 
 int hash_f(const record& x);
 
@@ -83,7 +83,7 @@ class list2_node : public record
 
 
 
-int hash_f(const record& x)
+int hash_f(int K, const record& x)
 {
 	const char *s = x.get_name();
 	int res = 0;

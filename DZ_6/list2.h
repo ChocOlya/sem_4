@@ -20,7 +20,7 @@ class list2
 			this->delete_list();
 		}
 		list2_node *get_head() { return head; }
-		io_status read (avl_tree * garden, FILE *fp = stdin)
+		io_status read (int K, avl_tree * garden, FILE *fp = stdin)
 		{
 			list2_node buf;
 			io_status ret;
@@ -32,7 +32,7 @@ class list2
 				return io_status::memory;
 			*head = (list2_node&&) buf;
 			curr = head;
-			int res = hash_f(*curr);
+			int res = hash_f(K, *curr);
 			garden[res].read(curr);
 			while ((ret = buf.read(fp)) == io_status::success)
 			{
@@ -46,7 +46,7 @@ class list2
 				curr->set_next(tail);
 				tail->set_prev(curr);
 				curr = tail;
-				res = hash_f(*curr);
+				res = hash_f(K, *curr);
 				garden[res].read(curr);
 
 			} 
@@ -57,7 +57,7 @@ class list2
 			}
 			return io_status::success;
 		}
-		list2_node * apply(command* test, int& kol, avl_tree * garden, razbor *HELP = nullptr)
+		list2_node * apply(int K, command* test, int& kol, avl_tree * garden, razbor *HELP = nullptr)
 		{
 			list2_node *curr = head;
 			command_type t = test->get_type();
@@ -66,14 +66,14 @@ class list2
 			//printf("buuu0\n");
 			if (test->get_c_name() == condition::eq && test->get_op() != operation::lor)//when we know the name of evrybody
 			{
-				printf("IN TREE\n");
-				int index = hash_f(*test);
+				//printf("IN TREE\n");
+				int index = hash_f(K, *test);
 				head_el = garden[index].find_in_tree(test);
 				return head_el;
 			}
 			else
 			{
-				printf("NOT IN TREE\n");
+				//printf("NOT IN TREE\n");
 				while(curr != nullptr)
 				{	
 					//printf("muuu\n");
@@ -103,7 +103,7 @@ class list2
 			return nullptr;
 		}
 
-		void do_st(list2_node *head_el, command* test, avl_tree * garden)
+		void do_st(int K, list2_node *head_el, command* test, avl_tree * garden)
 		{
 
 			if (test->get_type() == command_type::select)
@@ -129,27 +129,45 @@ class list2
 			if (test->get_type() == command_type::del)
 			{
 				list2_node *curr = head_el;
+				// printf("We want to delete:\n");
+				// print_select(head_el);
+				// printf("From:\n");
+				// this->print();
+				
+
 				while(head_el != nullptr)
 				{
+					//printf("pupupu\n");
 					if (head == head_el)
 					{
+						//printf("Case1\n");
 						head = head_el->next;
 						if (head != nullptr) head->prev = nullptr;
 						curr = head_el->next_select;
-						printf("Delete the member ");
-						head_el->print();
-						garden[hash_f(*head_el)].delete_node(head_el);
+						// printf("Delete the member ");
+						// head_el->print();
+						int index = hash_f(K, *head_el);
+						garden[index].delete_node(head_el);
+						// garden[index].print();
+						// printf("NOW:\n");
+						// this->print();
 						delete head_el;
 						head_el = curr;
 					}
 					else
 					{
+						//printf("Case2\n");
 						if (head_el->prev != nullptr) head_el->prev->next = head_el->next;
 						if (head_el->next != nullptr) head_el->next->prev = head_el->prev;
 						curr = head_el->next_select;
-						printf("Delete the member ");
-						head_el->print();
-						garden[hash_f(*head_el)].delete_node(head_el);
+						// printf("Delete the member ");
+						// head_el->print();
+						int index = hash_f(K, *head_el);
+						//garden[index].print();
+						garden[index].delete_node(head_el);
+						// garden[index].print();
+						// printf("NOW:\n");
+						// this->print();
 						delete head_el;
 						head_el = curr;
 					}
@@ -276,28 +294,29 @@ class list2
 		}
 
 
-		void add_value(command * test, avl_tree *garden)
+		// void add_value(int K, command * test, avl_tree *garden)
+		// {
+		// 	list2_node *curr = head;
+		// 	head = new list2_node;
+		// 	head->next = curr;
+		// 	if (curr != nullptr) curr->prev = head;
+		// 	// head->set_group(test->get_group());
+		// 	// head->set_phone(test->get_phone());
+		// 	*(record*)head = static_cast<record&&>(*test);
+		// 	garden[hash_f(K, *head)].read(head);
+
+		// 	return;
+
+
+		// }
+
+
+		void insert(int K, command * test, avl_tree * garden)
 		{
-			list2_node *curr = head;
-			head = new list2_node;
-			head->next = curr;
-			if (curr != nullptr) curr->prev = head;
-			// head->set_group(test->get_group());
-			// head->set_phone(test->get_phone());
-			*(record*)head = static_cast<record&&>(*test);
-			garden[hash_f(*head)].read(head);
-
-			return;
-
-
-		}
-
-
-		void insert(command * test, avl_tree * garden)
-		{
-			list2_node *el = garden[hash_f(*test)].read_record(*test);//find in tree and retern lis2_node where it would lie
+			list2_node *el = garden[hash_f(K, *test)].read_record(*test);//find in tree and retern lis2_node where it would lie
 			if (el == nullptr) return;
 			el->next = head;
+			head->prev = el;
 			head = el;
 		}
 

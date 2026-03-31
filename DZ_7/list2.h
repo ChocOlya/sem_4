@@ -99,6 +99,7 @@ class list2
 				list2_node *end = nullptr, *pupu = nullptr;
 				hash_f(K1, K2, *test, index_n, index_ph);
 				head_el = garden_name[index_n].find_in_tree(test, &end);
+				if (head_el == nullptr) return garden_phone[index_ph].find_in_tree(test, &pupu);
 				end->next_select = end;	
 				end->next_select = garden_phone[index_ph].find_in_tree(test, &pupu);
 				return head_el;///////CHANGEEEEEEEE

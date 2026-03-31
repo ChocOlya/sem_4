@@ -1,1 +1,1 @@
-Cannot open ./sem4/DZ_6/BD_TESTS/a1000000_sort_n.txt
+Cannot open ./BD_TESTS/a1000000_sort_g.txt

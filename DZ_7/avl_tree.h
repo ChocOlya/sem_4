@@ -690,90 +690,51 @@ class avl_tree
 		}
 
 
-		list2_node * find_in_tree(command * test, list2_node **end0)
+		list2_node * find_in_tree(command * test, list2_node **end0, razbor * HELP = nullptr)
 		{
 			list2_node *result = nullptr;
 			//const char *s = test->get_name();
 			avl_tree_node *where = find(root, * test, con);
 			if (where == nullptr) return nullptr;
-			if (test->get_op() != operation::lor)
+			if (where->head == nullptr)
 			{
-				if (where->head == nullptr)
+				if ((where->el)->get_next_select() == nullptr && test->apply(*(where->el), HELP))//////////NEED TO CHANGE
 				{
-					if (test->apply(*(where->el)))//////////NEED TO CHANGE
-					{
-						result = where->el;
-						result->set_next_select(nullptr);
-					}
-					return result;
-				}
-				else
-				{
-					list_node *curr = where->head;
-					list2_node *end = nullptr;
-					for(; curr; curr = curr->next_)
-					{
-						if (test->apply_ph_and_gr(*(curr->el)))///////////NEED TO CHANGE
-						{
-							if (result == nullptr)
-							{
-								result = curr->el;
-								end = result;
-							}
-							else
-							{
-								end->set_next_select(curr->el);
-								end = curr->el;
-							}
-						}
-						
-					}
-					if (end != nullptr) end->set_next_select(nullptr);
+					result = where->el;
+					//result->set_next_select(nullptr);
 					return result;
 				}
 			}
 			else
 			{
-				if (where->head == nullptr)
+				list_node *curr = where->head;
+				list2_node *end = nullptr;
+				for(; curr; curr = curr->next_)
 				{
-					if ((where->el)->get_next_select() == nullptr)//////////NEED TO CHANGE
+					if (((curr->el)->get_next_select() == nullptr) && test->apply(*(where->el), HELP))///////////NEED TO CHANGE
 					{
-						result = where->el;
-						//result->set_next_select(nullptr);
-						return result;
-					}
-				}
-				else
-				{
-					list_node *curr = where->head;
-					list2_node *end = nullptr;
-					for(; curr; curr = curr->next_)
-					{
-						if ((curr->el)->get_next_select() == nullptr)///////////NEED TO CHANGE
+						if (result == nullptr)
 						{
-							if (result == nullptr)
-							{
-								result = curr->el;
-								end = result;
-							}
-							else
-							{
-								end->set_next_select(curr->el);
-								end = curr->el;
-							}
+							result = curr->el;
+							end = result;
 						}
-						
+						else
+						{
+							end->set_next_select(curr->el);
+							end = curr->el;
+						}
 					}
-					if (end != nullptr) 
-					{
-
-						end->set_next_select(nullptr);
-						*end0 = end;
-					}
-					return result;
+					
 				}
-				return nullptr;
+				if (end != nullptr) 
+				{
+
+					end->set_next_select(nullptr);
+					*end0 = end;
+				}
+				return result;
 			}
+			return nullptr;
 			
 		}
 

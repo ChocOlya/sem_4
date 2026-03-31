@@ -88,7 +88,7 @@ class list2
 				else 
 				{
 					//printf("FIND ONLY IN PHONE TREE\n");
-					head_el = garden_phone[index_ph].find_in_tree(test, &end);
+					head_el = garden_phone[index_ph].find_in_tree(test, &end, HELP);
 					return head_el;
 				}
 				

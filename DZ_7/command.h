@@ -9,6 +9,13 @@
 
 
 
+enum class by_who
+{
+	name,
+	phone,
+	group,
+	none,
+};
 
 
 bool where (char *s);
@@ -687,7 +694,36 @@ class command : public record
 			if (op == operation::lor) return false;
 			return true;
 		}
+
+
+
+
+
+		bool apply_another(by_who who, const record& x, razbor* Rez = nullptr)
+		{
+			switch (who)
+			{
+				case by_who::none:
+					return apply(x, Rez);
+				case by_who::name:
+					if (!(x.compare_group(c_group, *this))) return false;
+					return x.compare_phone(c_phone, *this);
+				case by_who::phone:
+					if (!(x.compare_group(c_group, *this))) return false;
+					return x.compare_name(c_name, *this, Rez);
+				case by_who::group:
+					if (!(x.compare_phone(c_phone, *this))) return false;
+					return x.compare_name(c_name, *this, Rez);
+				
+			}
+			return false;
+		}
+
+
+
 };
+
+
 
 
 

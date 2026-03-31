@@ -12,13 +12,6 @@ enum class whitch_one
 };
 
 
-enum class by_who
-{
-	name,
-	phone,
-	group,
-	none,
-};
 
 
 class list_node 
@@ -693,12 +686,13 @@ class avl_tree
 		list2_node * find_in_tree(command * test, list2_node **end0, razbor * HELP = nullptr)
 		{
 			list2_node *result = nullptr;
+			operation op = test->get_op();
 			//const char *s = test->get_name();
 			avl_tree_node *where = find(root, * test, con);
 			if (where == nullptr) return nullptr;
 			if (where->head == nullptr)
 			{
-				if ((where->el)->get_next_select() == nullptr && test->apply(*(where->el), HELP))//////////NEED TO CHANGE
+				if ((where->el)->get_next_select() == nullptr && (op == operation::lor || test->apply_another(con, *(where->el), HELP)))//////////NEED TO CHANGE
 				{
 					result = where->el;
 					//result->set_next_select(nullptr);
@@ -711,7 +705,7 @@ class avl_tree
 				list2_node *end = nullptr;
 				for(; curr; curr = curr->next_)
 				{
-					if (((curr->el)->get_next_select() == nullptr) && test->apply(*(where->el), HELP))///////////NEED TO CHANGE
+					if (((curr->el)->get_next_select() == nullptr) && (op == operation::lor || test->apply_another(con, *(curr->el), HELP)))///////////NEED TO CHANGE
 					{
 						if (result == nullptr)
 						{

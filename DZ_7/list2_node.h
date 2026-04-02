@@ -90,9 +90,14 @@ void hash_f(int K1, int K2, const record& x, int& index_n, int& index_ph)
 	if (s != nullptr) for (int i = 0; s[i] != '\0'; i++) res += s[i];
 	res = res % K1;
 	index_n = res;
+	int kol = 0;
 	res = x.get_phone();
-	res = res % K2;
-	index_ph = res;
+	while (res != 0)
+	{
+		kol += (res % 10);
+		res = res / 10;
+	}
+	index_ph = kol % K2;
 	return; 
 }
 

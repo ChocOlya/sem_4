@@ -724,6 +724,8 @@ class avl_tree
 
 		static list2_node *check_all_el(avl_tree_node *curr, condition c_name, condition c_phone, record& x, razbor* HELP, list2_node** end00)
 		{
+			//printf("Still alive\n");
+			curr->print();
 			list2_node * HEAD = nullptr, *END = nullptr;
 			if (curr->el->compare_name(c_name, x, HELP) == true)
 			{
@@ -787,7 +789,7 @@ class avl_tree
 			{
 				list_node *curr0 = curr->head;
 				list2_node *end_curr = nullptr;
-				for(; curr; curr0 = curr0->next_)
+				for(; curr0; curr0 = curr0->next_)
 				{
 					if (curr0->el->compare_phone(c_phone, x) == true)///////////NEED TO CHANGE
 					{

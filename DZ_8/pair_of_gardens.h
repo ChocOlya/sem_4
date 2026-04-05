@@ -33,7 +33,7 @@ class pair_of_gardens
 		if (garden_phone == nullptr)
 		{
 			garden_phone = new avl_tree [K2];
-			for (int i = 0; i < K2; i++) garden_phone[i].set_con(ordering::name);
+			for (int i = 0; i < K2; i++) garden_phone[i].set_con(ordering::phone);
 		}
 	}
 	void add_value(list2_node *x)
@@ -89,15 +89,21 @@ class pair_of_gardens
 	list2_node *group_AND(command *test, razbor *HELP)
 	{
 		list2_node *HEAD = nullptr, *END = nullptr, *this_head = nullptr, *this_end = nullptr;
+		//printf("GROUP AND\n");
 		for (int i = 0; i < K1; i++)
 		{
+			//printf("cheeeck %d\n", K1);
 			this_head = garden_name[i].find_in_all_tree(test, HELP, &this_end);
+			//printf("found in tree umber %d\n", i);
 			if (this_head != nullptr)
 			{
 				if (HEAD == nullptr)
 				{
+					//printf("yeee\n");
 					HEAD = this_head;
 					END = this_end;
+					//HEAD->print();
+					//END->print();
 				}
 				else
 				{
@@ -105,6 +111,7 @@ class pair_of_gardens
 					END = this_end;
 				}
 			}
+			this_end = nullptr;
 		}
 		return HEAD;
 

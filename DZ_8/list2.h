@@ -5,6 +5,7 @@
 # include "razbor.h"
 # include "avl_tree.h"
 # include "list2_node.h"
+# include "pair_of_gardens.h"
 
 
 
@@ -20,7 +21,7 @@ class list2
 			this->delete_list();
 		}
 		list2_node *get_head() { return head; }
-		io_status read (pair_Of_gardens ALL, pair_of_gardens * GROUP, FILE *fp = stdin)
+		io_status read (pair_of_gardens& ALL, pair_of_gardens * GROUP, FILE *fp = stdin)
 		{
 			list2_node buf;
 			io_status ret;
@@ -35,7 +36,7 @@ class list2
 			*head = (list2_node&&) buf;
 			curr = head;
 			ALL.add_value(curr);
-			GARDEN[curr->get_group()].add_value(curr);
+			GROUP[curr->get_group()].add_value(curr);
 			
 			while ((ret = buf.read(fp)) == io_status::success)
 			{
@@ -50,7 +51,7 @@ class list2
 				tail->set_prev(curr);
 				curr = tail;
 				ALL.add_value(curr);
-				GARDEN[curr->get_group()].add_value(curr);
+				GROUP[curr->get_group()].add_value(curr);
 
 			} 
 			if(!feof(fp))
@@ -60,16 +61,16 @@ class list2
 			}
 			return io_status::success;
 		}
-		list2_node * apply(command * test, pair_of_gardens ALL, pair_of_gardens * GROUP, razbor *HELP = nullptr)
+		list2_node * apply(command * test, pair_of_gardens& ALL, pair_of_gardens * GROUP, razbor *HELP = nullptr)
 		{
-			if (test->get_c_group == condition::eq && test->get_op() != operation::lor)
+			if (test->get_c_group() == condition::eq && test->get_op() != operation::lor)
 			{
 				if (test->get_c_name() == condition::eq || test->get_c_phone() == condition::eq)
 				{
-					return GARDEN[test->get_group()].name_phone_AND(test);
+					return GROUP[test->get_group()].name_phone_AND(test);
 				}
 				else
-					return GARDEN[test->get_group()].group_AND(test, HELP);
+					return GROUP[test->get_group()].group_AND(test, HELP);
 
 			}
 			else if ((test->get_c_name() == condition::eq || test->get_c_phone() == condition::eq) && test->get_op() != operation::lor)//when we know the name of evrybody
@@ -82,6 +83,7 @@ class list2
 			}
 			else
 			{
+				list2_node *curr = head, *head_el = nullptr, *next_el = nullptr;
 				while(curr != nullptr)
 				{	
 					if (test->apply(*curr, HELP) == true)
@@ -106,7 +108,7 @@ class list2
 		}
 
 
-		void do_st(ilist2_node *head_el, command* test, pair_of_gardens ALL, pair_of_gardens * GROUP, int& kol)
+		void do_st(list2_node *head_el, command* test, pair_of_gardens& ALL, pair_of_gardens * GROUP, int& kol)
 		{
 
 			if (test->get_type() == command_type::select)
@@ -280,17 +282,15 @@ class list2
 		}
 
 
-		void insert(int K1, int K2, record x, avl_tree * garden_name, avl_tree * garden_phone)
+		void insert(record& x, pair_of_gardens& ALL, pair_of_gardens * GROUP)
 		{
-			int index_n = 0, index_ph = 0;
-			hash_f(K1, K2, x, index_n, index_ph);
-			list2_node *el = garden_name[index_n].read_record(x);//find in tree and retern lis2_node where it would lie
-			if (el == nullptr) return;
-			el->next = head;
-			if (head != nullptr) head->prev = el;
-			head = el;
-			garden_phone[index_ph].read(head);
-			//garden[index].print();
+			list2_node * head_new = GROUP[x.get_group()].insert(x);
+			if (head_new == nullptr) return;
+			ALL.add_value(head_new);
+			head_new->next = head;
+			if (head != nullptr) head->prev = head_new;
+			head = head_new;
+			
 		}
 
 	private:

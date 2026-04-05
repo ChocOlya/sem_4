@@ -79,6 +79,7 @@ class list2_node : public record
 		}
 
 	friend class list2;
+	friend class pair_of_gardens;
 };
 
 

@@ -8,6 +8,8 @@
 
 //#include "command_type.h"
 //#include "definition_of_k.h"
+int pair_of_gardens::K1;
+int pair_of_gardens::K2;
 
 int read_parametr(int& K1, int& k2, const char *s);
 
@@ -39,6 +41,7 @@ int main(int argc, char const *argv[])
 		printf("Cannot open %s\n", name_in);
 		return -1;
 	}
+
 	ALL.set_K1(K1);
 	ALL.set_K2(K2);
 
@@ -84,7 +87,7 @@ int main(int argc, char const *argv[])
 				s = end;
 				continue;
 			}
-			//test.print();
+			test.print();
 			COM = test.get_type();
 			list2_node *head = nullptr; 
 			if (test.like())
@@ -122,8 +125,7 @@ int main(int argc, char const *argv[])
 	printf("There was not the command quit\n");
 	t = (clock()-t)/CLOCKS_PER_SEC;
 	printf ("%s : Result = %d Elapsed = %.2f\n", argv[0], kol, t);
-	delete[] garden_name;
-	delete[] garden_phone;
+
 	return 0;
 }
 

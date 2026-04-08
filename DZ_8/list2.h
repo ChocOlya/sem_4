@@ -143,7 +143,7 @@ class list2
 					{
 						head = head_el->next;
 						if (head != nullptr) head->prev = nullptr;
-						head_el->print();
+						//head_el->print();
 						curr = head_el->next_select;
 						ALL.del_value(head_el);
 						GROUP[head_el->get_group()].del_value(head_el);

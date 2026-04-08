@@ -155,7 +155,7 @@ class list2
 						head_el->prev->next = head_el->next;
 						if (head_el->next != nullptr) head_el->next->prev = head_el->prev;
 						curr = head_el->next_select;
-						head_el->print();
+						//head_el->print();
 						ALL.del_value(head_el);
 						GROUP[head_el->get_group()].del_value(head_el);
 						delete head_el;

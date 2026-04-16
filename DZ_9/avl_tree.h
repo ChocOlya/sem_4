@@ -664,7 +664,7 @@ class avl_tree
 		}
 
 
-		list2_node * find_in_tree(command * test, list2_node **end0, int& kol, razbor * HELP = nullptr)
+		list2_node * find_in_tree(command * test, list2_node **end0, razbor * HELP = nullptr)
 		{
 			list2_node *result = nullptr;
 			operation op = test->get_op();
@@ -675,7 +675,6 @@ class avl_tree
 			{
 				if ((where->el)->get_next_select() == nullptr && (op == operation::lor || test->apply_another(con, *(where->el), HELP)))//////////NEED TO CHANGE
 				{
-					kol++;
 					result = where->el;
 					*end0 = result;
 					//result->set_next_select(nullptr);
@@ -690,7 +689,6 @@ class avl_tree
 				{
 					if (((curr->el)->get_next_select() == nullptr) && (op == operation::lor || test->apply_another(con, *(curr->el), HELP)))///////////NEED TO CHANGE
 					{
-						kol++;
 						if (result == nullptr)
 						{
 							result = curr->el;
@@ -716,27 +714,27 @@ class avl_tree
 			
 		}
 
-		list2_node * find_in_all_tree(command * test, razbor * HELP, list2_node **end, int& kol)
+		list2_node * find_in_all_tree(command * test, razbor * HELP, list2_node **end)
 		{
 			if (root == nullptr) return nullptr;
 
-			return check_all_el(root, test->get_c_name(), test->get_c_phone(), *test, HELP, end, kol);
+			return check_all_el(root, test->get_c_name(), test->get_c_phone(), *test, HELP, end);
 		}
 
 
-		static list2_node *check_all_el(avl_tree_node *curr, condition c_name, condition c_phone, record& x, razbor* HELP, list2_node** end00, int& kol)
+		static list2_node *check_all_el(avl_tree_node *curr, condition c_name, condition c_phone, record& x, razbor* HELP, list2_node** end00)
 		{
 			//printf("Still alive\n");
 			//curr->print();
 			list2_node * HEAD = nullptr, *END = nullptr;
 			if (curr->el->compare_name(c_name, x, HELP) == true)
 			{
-				HEAD = check_phone_node(curr, c_phone, x, &END, kol);
+				HEAD = check_phone_node(curr, c_phone, x, &END);
 			}
 			list2_node *h_l = nullptr, *e_l = nullptr, *h_r = nullptr, *e_r = nullptr;
 			if (curr->left != nullptr)
 			{
-				h_l = check_all_el(curr->left, c_name, c_phone, x, HELP, &e_l, kol);
+				h_l = check_all_el(curr->left, c_name, c_phone, x, HELP, &e_l);
 				if (h_l != nullptr)
 				{
 					if (HEAD == nullptr)
@@ -753,7 +751,7 @@ class avl_tree
 			}
 			if (curr->right != nullptr)
 			{
-				h_r = check_all_el(curr->right, c_name, c_phone, x, HELP, &e_r, kol);
+				h_r = check_all_el(curr->right, c_name, c_phone, x, HELP, &e_r);
 				if (h_r != nullptr)
 				{
 					if (HEAD == nullptr)
@@ -774,14 +772,13 @@ class avl_tree
 		}
 
 
-		static list2_node* check_phone_node(avl_tree_node *curr, condition c_phone, record& x, list2_node **end, int& kol)
+		static list2_node* check_phone_node(avl_tree_node *curr, condition c_phone, record& x, list2_node **end)
 		{
 			list2_node *result = nullptr;
 			if (curr->head == nullptr)
 			{
 				if (curr->el->compare_phone(c_phone, x) == true)//////////NEED TO CHANGE
 				{
-					kol++;
 					result = curr->el;
 					*end = result;
 					//result->set_next_select(nullptr);
@@ -796,7 +793,6 @@ class avl_tree
 				{
 					if (curr0->el->compare_phone(c_phone, x) == true)///////////NEED TO CHANGE
 					{
-						kol++;
 						if (result == nullptr)
 						{
 							result = curr0->el;

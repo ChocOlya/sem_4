@@ -211,14 +211,14 @@ int main (int argc, char const *argv[])
 									list.insert(test, ALL, GROUP);
 									break;
 								case command_type::select:
-									head = list.apply(&test, ALL, GROUP, kol, &HELP);
-									head->print_select();
-									head = list.do_st(head, &test, ALL, GROUP);
+									head = list.apply(&test, ALL, GROUP, &HELP);
+									//head->print_select();
+									head = list.do_st(head, &test, ALL, GROUP, kol);
 									break;
 								case command_type:: del:
-									head = list.apply(&test, ALL, GROUP, kol, &HELP);
-									head->print_select();
-									list.do_st(head, &test, ALL, GROUP);
+									head = list.apply(&test, ALL, GROUP, &HELP);
+									//head->print_select();
+									list.do_st(head, &test, ALL, GROUP, kol);
 									break;
 								case command_type::none:
 									break;
@@ -277,7 +277,7 @@ int writeToClient (int fd, int kol, list2_node *head, ordering *order_by, comman
 	char where[BUFLEN];
 	list2_node *prev = nullptr;
 	// Длина сообщения
-	printf("%d = kol\n", kol);
+	//printf("%d = kol\n", kol);
 	if (COM == command_type::select)
 	{
 			// Пересылаем длину сообщения
@@ -289,17 +289,17 @@ int writeToClient (int fd, int kol, list2_node *head, ordering *order_by, comman
 			//printf("A0\n");
 			where[0] = '\0';
 			//printf("A1\n");
-			head->print();
+			//head->print();
 			//printf("A2\n");
 			head->prepare_str(where, order_by);
-			printf("WANT TO SEND %s\n", where);
+			//printf("WANT TO SEND %s\n", where);
 			len = strlen(where);
 			if (send_a_namber(fd, len) < 0) return -1;
 			if (send_a_str(fd, where, len) < 0) return -1; 
 			prev = head;
 			head = head->get_next_select();
 			prev->set_next_select(nullptr);
-			printf("sended\n");
+			//printf("sended\n");
 		}
 		return 0;
 	}
@@ -315,7 +315,7 @@ int writeToClient (int fd, int kol, list2_node *head, ordering *order_by, comman
 	}
 	if (COM == command_type::none)
 	{
-		if (send_a_namber(fd, -7) < 0)
+		if (send_a_namber(fd, -8) < 0)
 			return -1;
 		sprintf (where, "Command is not right");
 		len = strlen(where);

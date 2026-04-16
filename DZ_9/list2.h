@@ -61,25 +61,25 @@ class list2
 			}
 			return io_status::success;
 		}
-		list2_node * apply(command * test, pair_of_gardens& ALL, pair_of_gardens * GROUP, int& kol, razbor *HELP = nullptr)
+		list2_node * apply(command * test, pair_of_gardens& ALL, pair_of_gardens * GROUP, razbor *HELP = nullptr)
 		{
 			if (test->get_c_group() == condition::eq && test->get_op() != operation::lor)
 			{
 				if (test->get_c_name() == condition::eq || test->get_c_phone() == condition::eq)
 				{
-					return GROUP[test->get_group()].name_phone_AND(test, kol, HELP);
+					return GROUP[test->get_group()].name_phone_AND(test,  HELP);
 				}
 				else
-					return GROUP[test->get_group()].group_AND(test, HELP, kol);
+					return GROUP[test->get_group()].group_AND(test, HELP);
 
 			}
 			else if ((test->get_c_name() == condition::eq || test->get_c_phone() == condition::eq) && test->get_op() != operation::lor)//when we know the name of evrybody
 			{
-				return ALL.name_phone_AND(test, kol, HELP);				
+				return ALL.name_phone_AND(test, HELP);				
 			}
 			else if ((test->get_c_name() == condition::eq && test->get_c_phone() == condition::eq) && test->get_c_group() == condition::none)
 			{
-				return ALL.name_OR_phone(test, kol);
+				return ALL.name_OR_phone(test);
 			}
 			else
 			{
@@ -88,7 +88,6 @@ class list2
 				{	
 					if (test->apply(*curr, HELP) == true)
 					{
-						kol++;
 						if (head_el == nullptr)
 						{
 							head_el = curr;
@@ -109,7 +108,7 @@ class list2
 		}
 
 
-		list2_node * do_st(list2_node *head_el, command* test, pair_of_gardens& ALL, pair_of_gardens * GROUP)
+		list2_node * do_st(list2_node *head_el, command* test, pair_of_gardens& ALL, pair_of_gardens * GROUP, int& kol)
 		{
 
 			if (test->get_type() == command_type::select)
@@ -123,15 +122,13 @@ class list2
 				}
 				//print_select(head_new);
 				// ordering *order = test->get_order();
-				// list2_node *curr = nullptr;
-				// while (head_new != nullptr)
-				// {
-				// 	//kol++;
-				// 	head_new->print(order);
-				// 	curr = head_new->next_select;
-				// 	head_new->next_select = nullptr;
-				// 	head_new = curr;
-				// }
+				list2_node *curr = head_new;
+				while (curr != nullptr)
+				{
+					kol++;
+					curr = curr->next_select;
+					
+				}
 				// printf("\n");
 				return head_new;
 			}

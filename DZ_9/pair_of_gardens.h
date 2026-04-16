@@ -62,38 +62,38 @@ class pair_of_gardens
 	}
 
 
-	list2_node * name_OR_phone(command *test, int& kol)
+	list2_node * name_OR_phone(command *test)
 	{
 		int index_n = 0, index_ph = 0;
 		list2_node *end = nullptr, *head_el = nullptr, *pupu = nullptr;
 		hash_f(K1, K2, *test, index_n, index_ph);
-		head_el = garden_name[index_n].find_in_tree(test, &end, kol);
-		if (head_el == nullptr) return garden_phone[index_ph].find_in_tree(test, &pupu, kol);
+		head_el = garden_name[index_n].find_in_tree(test, &end);
+		if (head_el == nullptr) return garden_phone[index_ph].find_in_tree(test, &pupu);
 		end->next_select = end;	
-		end->next_select = garden_phone[index_ph].find_in_tree(test, &pupu, kol);
+		end->next_select = garden_phone[index_ph].find_in_tree(test, &pupu);
 		return head_el;///////CHANGEEEEEEEE
 	}
 
 
-	list2_node *name_phone_AND(command *test, int& kol, razbor *HELP = nullptr)//op = land, name or phone =
+	list2_node *name_phone_AND(command *test, razbor *HELP = nullptr)//op = land, name or phone =
 	{
 		int index_n = 0, index_ph = 0;
 		list2_node *pupu = nullptr;
 		hash_f(K1, K2, *test, index_n, index_ph);
 		if (test->get_c_phone() == condition::eq)
-			return garden_phone[index_ph].find_in_tree(test, &pupu, kol, HELP);
-		return garden_name[index_n].find_in_tree(test, &pupu, kol);
+			return garden_phone[index_ph].find_in_tree(test, &pupu, HELP);
+		return garden_name[index_n].find_in_tree(test, &pupu);
 	}
 
 
-	list2_node *group_AND(command *test, razbor *HELP, int& kol)
+	list2_node *group_AND(command *test, razbor *HELP)
 	{
 		list2_node *HEAD = nullptr, *END = nullptr, *this_head = nullptr, *this_end = nullptr;
 		//printf("GROUP AND\n");
 		for (int i = 0; i < K1; i++)
 		{
 			//printf("cheeeck %d\n", K1);
-			this_head = garden_name[i].find_in_all_tree(test, HELP, &this_end, kol);
+			this_head = garden_name[i].find_in_all_tree(test, HELP, &this_end);
 			//printf("found in tree umber %d\n", i);
 			if (this_head != nullptr)
 			{

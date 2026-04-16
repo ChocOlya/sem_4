@@ -74,6 +74,7 @@ int main (void)
 			close (sock);
 			return 0;
 		}
+		printf("\n");
 	}
 	
 	// Закрываем socket
@@ -110,10 +111,9 @@ void readFromServer (int fd, int& flag)
 	// Получаем длину сообщения
 	fprintf (stdout, "Server’s replay:\n");
 	if (read_a_number(fd, kol) < 0) return;
-	if (kol == -7)
+	if (kol == -7 || kol == -8)
 	{
-		printf("(1000)-7\n");
-		flag = 1;
+		if (kol == -7) flag = 1;
 		if (read_a_number(fd, len) < 0) return;
 		// Получаем len байт
 		if (read_a_str(fd, buf, len) < 0) return;
@@ -131,7 +131,7 @@ void readFromServer (int fd, int& flag)
 	}
 	if (kol == 0)
 	{
-		fprintf (stderr, "Client: no message\n");
+		//fprintf (stderr, "Client: no message\n");
 		return;
 	}
 	for (int j = 0; j < kol; j++)
@@ -249,7 +249,7 @@ int read_a_str(int fd, char* buf, int len)
 	else
 	{
 		// есть данные
-		fprintf (stdout, "Client got %d bytes of message: %s\n", i, buf);
+		//fprintf (stdout, "Client got %d bytes of message: %s\n", i, buf);
 		return 0;
 	}
 	return 0;

@@ -23,6 +23,15 @@ class list2_node : public record
 			next = nullptr;
 			prev = nullptr;
 		}
+		void print_select()
+		{
+			list2_node *head = this;
+			while (head != nullptr)
+			{
+				head->print();
+				head = head->next_select;
+			}
+		}
 		list2_node& operator= (const list2_node&) = delete;
 		list2_node&& operator= (list2_node&& r)
 		{

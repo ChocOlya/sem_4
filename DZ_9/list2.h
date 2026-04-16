@@ -109,7 +109,7 @@ class list2
 		}
 
 
-		void do_st(list2_node *head_el, command* test, pair_of_gardens& ALL, pair_of_gardens * GROUP, int& kol)
+		list2_node * do_st(list2_node *head_el, command* test, pair_of_gardens& ALL, pair_of_gardens * GROUP)
 		{
 
 			if (test->get_type() == command_type::select)
@@ -122,18 +122,18 @@ class list2
 					head_new = sort(head_el, oR);
 				}
 				//print_select(head_new);
-				ordering *order = test->get_order();
-				list2_node *curr = nullptr;
-				while (head_new != nullptr)
-				{
-					kol++;
-					head_new->print(order);
-					curr = head_new->next_select;
-					head_new->next_select = nullptr;
-					head_new = curr;
-				}
-				printf("\n");
-				return;
+				// ordering *order = test->get_order();
+				// list2_node *curr = nullptr;
+				// while (head_new != nullptr)
+				// {
+				// 	//kol++;
+				// 	head_new->print(order);
+				// 	curr = head_new->next_select;
+				// 	head_new->next_select = nullptr;
+				// 	head_new = curr;
+				// }
+				// printf("\n");
+				return head_new;
 			}
 			if (test->get_type() == command_type::del)
 			{
@@ -163,18 +163,19 @@ class list2
 						head_el = curr;
 					}
 				}
-				return;
+				return nullptr;
 			}
+			return nullptr;
 		}
 
-		static void print_select(list2_node *head)
-		{
-			while (head != nullptr)
-			{
-				head->print();
-				head = head->next_select;
-			}
-		}
+		// static void print_select(list2_node *head)
+		// {
+		// 	while (head != nullptr)
+		// 	{
+		// 		head->print();
+		// 		head = head->next_select;
+		// 	}
+		// }
 
 
 		bool find(command *test)

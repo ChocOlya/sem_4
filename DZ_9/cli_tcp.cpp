@@ -63,6 +63,11 @@ int main (void)
 	while (fgets(buf, BUFLEN, stdin) != nullptr)
 	{
 		writeToServer (sock, buf);
+		if (strcmp(buf, "stop;") == 0)
+		{
+			close (sock);
+			return 0;
+		}
 		readFromServer (sock, flag);
 		if (flag == 1)
 		{
@@ -107,6 +112,7 @@ void readFromServer (int fd, int& flag)
 	if (read_a_number(fd, kol) < 0) return;
 	if (kol == -7)
 	{
+		printf("(1000)-7\n");
 		flag = 1;
 		if (read_a_number(fd, len) < 0) return;
 		// Получаем len байт
@@ -174,7 +180,7 @@ int send_a_namber(int fd, int num)
 
 int send_a_str(int fd, char *s, int len)
 {
-	int i = 0, nbytes = 0;
+	int i = 0, nbytes = 0; len++;
 	for (i = 0; len > 0; i += nbytes, len -= nbytes)
 	{
 		nbytes = write (fd, s + i, len);
@@ -218,7 +224,7 @@ int read_a_number(int fd, int& len)
 
 int read_a_str(int fd, char* buf, int len)
 {
-	int i = 0, nbytes = 0;
+	int i = 0, nbytes = 0; len++;
 	for (i = 0; len > 0; i += nbytes, len -= nbytes)
 	{
 		nbytes = read (fd, buf + i, len);

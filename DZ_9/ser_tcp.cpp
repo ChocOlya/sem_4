@@ -171,24 +171,24 @@ int main (int argc, char const *argv[])
 				else
 				{
 					// пришли данные в уже существующем соединени
-					err = readFromClient (i, buf);//READ
-					if (err < 0)
+					while ((readFromClient (i, buf)) >= 0)//READ
 					{
-						// ошибка или конец данных
-						close (i);
-						FD_CLR (i, &active_set);
-					}
-					else
-					{
+						// а если это команда закончить работу?
+						if (!strcmp (buf, "stop;"))
+						{
+							t = (clock() - t) / CLOCKS_PER_SEC;
+							close (sock);
+							return 0;
+						}
 						char *s = buf, *end = nullptr;
 						bool err1 = true;
-						while ((s = strtok_r(s, ";", &end)))
+						if ((s = strtok_r(s, ";", &end)) != nullptr)
 						{
-							//printf("s = %s\n", s);
+							COM = command_type::none;
 							if ((err1 = test.read_command(s)) != true)
 							{
 								printf("Comand is not right\n");
-								s = end;
+								writeToClient (i, 0, nullptr, nullptr, COM, 0, 0, argv[0]);
 								continue;
 							}
 							//test.print();
@@ -212,32 +212,34 @@ int main (int argc, char const *argv[])
 									break;
 								case command_type::select:
 									head = list.apply(&test, ALL, GROUP, kol, &HELP);
+									head->print_select();
+									head = list.do_st(head, &test, ALL, GROUP);
 									break;
 								case command_type:: del:
 									head = list.apply(&test, ALL, GROUP, kol, &HELP);
-									list.do_st(head, &test, ALL, GROUP, kol);
+									head->print_select();
+									list.do_st(head, &test, ALL, GROUP);
 									break;
 								case command_type::none:
 									break;
 
 							}
 							kol_all += kol;
-							writeToClient (i, kol, head, test.get_order_by(), COM, kol_all, t, argv[0]);
+							writeToClient (i, kol, head, test.get_order(), COM, kol_all, t, argv[0]);
 							if (flag == 1)
 							{
 								close (i);
 								FD_CLR (i, &active_set);
 								continue;
 							}
-							s = end;
 
 						}
 						if (err1 != true) printf("Comand is not right\n");
 
 						// данные прочитаны нормально
 						
-						close (i);
-						FD_CLR (i, &active_set);
+						// close (i);
+						// FD_CLR (i, &active_set);
 						// а если это команда закончить работу?
 						if (!strcmp (buf, "stop;"))
 						{
@@ -246,6 +248,11 @@ int main (int argc, char const *argv[])
 							return 0;
 						}
 					}
+
+						// ошибка или конец данных
+					close (i);
+					FD_CLR (i, &active_set);
+
 				}
 			}
 		}
@@ -268,8 +275,9 @@ int writeToClient (int fd, int kol, list2_node *head, ordering *order_by, comman
 {
 	int len = 0;
 	char where[BUFLEN];
+	list2_node *prev = nullptr;
 	// Длина сообщения
-	
+	printf("%d = kol\n", kol);
 	if (COM == command_type::select)
 	{
 			// Пересылаем длину сообщения
@@ -278,19 +286,26 @@ int writeToClient (int fd, int kol, list2_node *head, ordering *order_by, comman
 		// Пересылаем len байт
 		for (int j = 0; j < kol; j++)
 		{
+			//printf("A0\n");
 			where[0] = '\0';
+			//printf("A1\n");
+			head->print();
+			//printf("A2\n");
 			head->prepare_str(where, order_by);
+			printf("WANT TO SEND %s\n", where);
 			len = strlen(where);
 			if (send_a_namber(fd, len) < 0) return -1;
 			if (send_a_str(fd, where, len) < 0) return -1; 
+			prev = head;
 			head = head->get_next_select();
+			prev->set_next_select(nullptr);
+			printf("sended\n");
 		}
 		return 0;
 	}
 	if (COM == command_type::quit)
 	{
-		kol = -7;
-		if (send_a_namber(fd, 0) < 0)
+		if (send_a_namber(fd, -7) < 0)
 			return -1;
 		sprintf (where, "%s : Result = %d Elapsed = %.2f", s, kol_all, t);
 		len = strlen(where);
@@ -298,8 +313,17 @@ int writeToClient (int fd, int kol, list2_node *head, ordering *order_by, comman
 		if (send_a_str(fd, where, len) < 0) return -1; 
 		return 0;
 	}
-	
-	kol = 0;
+	if (COM == command_type::none)
+	{
+		if (send_a_namber(fd, -7) < 0)
+			return -1;
+		sprintf (where, "Command is not right");
+		len = strlen(where);
+		if (send_a_namber(fd, len) < 0) return -1;
+		if (send_a_str(fd, where, len) < 0) return -1; 
+		return 0;
+	}
+
 	if (send_a_namber(fd, 0) < 0)
 		return -1;
 	
@@ -333,7 +357,7 @@ int send_a_namber(int fd, int num)
 
 int send_a_str(int fd, char *s, int len)
 {
-	int i = 0, nbytes = 0;
+	int i = 0, nbytes = 0; len++;
 	for (i = 0; len > 0; i += nbytes, len -= nbytes)
 	{
 		nbytes = write (fd, s + i, len);
@@ -377,7 +401,7 @@ int read_a_number(int fd, int& len)
 
 int read_a_str(int fd, char* buf, int len)
 {
-	int i = 0, nbytes = 0;
+	int i = 0, nbytes = 0; len++;
 	for (i = 0; len > 0; i += nbytes, len -= nbytes)
 	{
 		nbytes = read (fd, buf + i, len);

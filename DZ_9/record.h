@@ -152,13 +152,15 @@ class record
 		}
 		void prepare_str(char *where, const ordering *place) const
 		{
-			if (place == nullptr)
+			if (place == nullptr || place[0] == ordering::none)
 			{
-				sprintf(where, " %s %d %d\n", name.get(), phone, group);
+				//printf("CASE 1\n");
+				sprintf(where, " %s %d %d", name.get(), phone, group);
 				return;
 			}
 			for (int i = 0; i < 3; i++)
 			{
+				//printf("CASE 2\n");
 				switch(place[i])
 				{
 					case ordering::name:
@@ -171,7 +173,6 @@ class record
 					sprintf(where + strlen(where), " %d", group);
 					continue;
 					case ordering::none:
-					sprintf(where + strlen(where), "\n");
 					return;
 				}
 			}

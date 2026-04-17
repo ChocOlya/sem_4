@@ -231,7 +231,7 @@ int main (int argc, char const *argv[])
 							{
 								close (i);
 								FD_CLR (i, &active_set);
-								continue;
+								break;
 							}
 
 						}

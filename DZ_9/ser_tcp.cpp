@@ -18,7 +18,7 @@
 int pair_of_gardens::K1;
 int pair_of_gardens::K2;
 // Определимся с номером порта и другими константами.
-#define PORT 5555
+//#define PORT 5555
 #define BUFLEN 1234
 // Две вспомогательные функции для чтения/записи (см. ниже)
 int readFromClient (int fd, char *buf);
@@ -38,6 +38,7 @@ int main (int argc, char const *argv[])
 	int K1 = 1, K2 = 1, err0 = 0;
 	pair_of_gardens ALL;
 	pair_of_gardens GROUP[1000];
+	int PORT;
 	FILE *fp;
 
 	int kol = 0, kol_all = 0;
@@ -46,9 +47,9 @@ int main (int argc, char const *argv[])
 	razbor HELP;
 
 
-	if (!(argc == 2))
+	if (!(argc == 3 && sscanf(argv[2], "%d", &PORT) == 1))
 	{
-		printf("Usage: %s filename\n", argv[0]);
+		printf("Usage: %s filename port\n", argv[0]);
 		return 1;
 	}
 	name_in = argv[1];

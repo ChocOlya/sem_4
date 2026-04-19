@@ -7,6 +7,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <time.h>
 // Определимся с портом, адресом сервера и другими константами.
 // В данном случае берем произвольный порт и адрес обратной связи
 // (тестируем на одной машине).
@@ -15,7 +16,7 @@
 #define BUFLEN 1234
 // Две вспомогательные функции для чтения/записи (см. ниже)
 void writeToServer (int fd, char *buf);
-void readFromServer (int fd, int& flag);
+void readFromServer (int fd, int& kol, int& flag);
 
 int send_a_namber(int fd, int num);
 int send_a_str(int fd, char *s, int len);
@@ -25,12 +26,12 @@ int read_a_str(int fd, char* buf, int len);
 
 int main (int argc, char const *argv[])
 {
-	int err;
-	int sock;
+	int err, sock, kol = 0;
 	struct sockaddr_in server_addr;
 	struct hostent *hostinfo;
 	char buf[BUFLEN];
 	const char* SERVER_NAME;
+	double t = 0;
 	int SERVER_PORT;
 	if (!(argc = 3 && sscanf(argv[2], "%d", &SERVER_PORT) == 1))
 	{
@@ -66,25 +67,29 @@ int main (int argc, char const *argv[])
 		return -1;
 	}
 	fprintf (stdout, "Connection is ready\n");
+	t = clock();
 	// Обмениваемся данными
 	int flag = 0;
 	while (fgets(buf, BUFLEN, stdin) != nullptr)
 	{
+		//printf("BUF %s", buf);
 		writeToServer (sock, buf);
 		if (strcmp(buf, "stop;") == 0)
 		{
+			printf("exit\n");
 			close (sock);
 			return 0;
 		}
-		readFromServer (sock, flag);
+		readFromServer (sock, kol, flag);
 		if (flag == 1)
 		{
+			t = (clock() - t) / CLOCKS_PER_SEC;
+			printf ("%s : Result = %d Elapsed = %.2f\n", argv[0], kol, t);
 			close (sock);
 			return 0;
 		}
 		printf("\n");
-	}
-	
+	}	
 	// Закрываем socket
 	close (sock);
 	return 0;
@@ -103,7 +108,6 @@ void writeToServer (int fd, char *buf)
 			break;
 		}
 	// Длина сообщения
-	len++;
 	// Пересылаем длину сообщения
 	if (send_a_namber(fd, len) < 0) return;
 	if (send_a_str(fd, buf, len) < 0) return;
@@ -111,8 +115,7 @@ void writeToServer (int fd, char *buf)
 }
 
 
-
-void readFromServer (int fd, int& flag)
+void readFromServer (int fd, int& kol_all, int& flag)
 {
 	int kol = 0, len = 0;
 	char buf[BUFLEN];
@@ -121,7 +124,12 @@ void readFromServer (int fd, int& flag)
 	if (read_a_number(fd, kol) < 0) return;
 	if (kol == -7 || kol == -8)
 	{
-		if (kol == -7) flag = 1;
+		if (kol == -7) 
+		{
+			//printf("read a quit\n");
+			flag = 1;
+			return;
+		}
 		if (read_a_number(fd, len) < 0) return;
 		// Получаем len байт
 		if (read_a_str(fd, buf, len) < 0) return;
@@ -130,18 +138,15 @@ void readFromServer (int fd, int& flag)
 			// нет данных
 			fprintf (stderr, "Client: no message\n");
 		}
-		else
-		{
-			// ответ успешно прочитан
-			fprintf (stdout, "%s\n", buf);
-		}
+		printf("%s\n", buf);
+		
 		return;
 	}
 	if (kol == 0)
 	{
-		//fprintf (stderr, "Client: no message\n");
 		return;
 	}
+	kol_all += kol;
 	for (int j = 0; j < kol; j++)
 	{
 		if (read_a_number(fd, len) < 0) return;

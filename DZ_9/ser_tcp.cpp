@@ -22,7 +22,7 @@ int pair_of_gardens::K2;
 #define BUFLEN 1234
 // Две вспомогательные функции для чтения/записи (см. ниже)
 int readFromClient (int fd, char *buf);
-int writeToClient (int fd, int kol, list2_node *head, ordering *order_by, command_type COM, int kol_all, double t, const char* s);
+int writeToClient (int fd, int kol, list2_node *head, ordering *order_by, command_type COM);
 int read_parametr(int& K1, int& k2, const char *s);
 int send_a_namber(int fd, int num);
 int send_a_str(int fd, char *s, int len);
@@ -34,14 +34,12 @@ int main (int argc, char const *argv[])
 {
 	io_status er = io_status::success;
 	const char *name_in = 0;
-	double t = clock();
 	int K1 = 1, K2 = 1, err0 = 0;
 	pair_of_gardens ALL;
 	pair_of_gardens GROUP[1000];
 	int PORT;
 	FILE *fp;
 
-	int kol = 0, kol_all = 0;
 	command_type COM = command_type::none;
 	command test;
 	razbor HELP;
@@ -90,13 +88,12 @@ int main (int argc, char const *argv[])
 		return -1;
 	}
 	fclose(fp);
-	kol = 0;
-	int flag = 0;
+	int kol = 0;
 	//создала список и структуры
 
 
 
-	int i, err, opt = 1;
+	int i, err, flag = 0, opt = 1;
 	int sock, new_sock;
 	fd_set active_set, read_set;
 	struct sockaddr_in addr;
@@ -138,6 +135,7 @@ int main (int argc, char const *argv[])
 	// Основной бесконечный цикл проверки состояния сокетов
 	while (1)
 	{
+		//printf("hello\n");
 		// Проверим, не появились ли данные в каком-либо сокете.
 		// В нашем варианте ждем до фактического появления данных.
 		read_set = active_set;
@@ -162,35 +160,31 @@ int main (int argc, char const *argv[])
 						return -1;
 					}
 					fprintf (stdout, "Server: connect from host %s, port %d.\n", inet_ntoa (client.sin_addr),(unsigned int) ntohs (client.sin_port));
-
 					FD_SET (new_sock, &active_set);
-
-					t = clock();
-					kol_all = 0;
-					flag = 0;
 				}
 				else
 				{
 					// пришли данные в уже существующем соединени
-					while ((readFromClient (i, buf)) >= 0)//READ
+					if ((readFromClient (i, buf)) >= 0)//READ
 					{
 						// а если это команда закончить работу?
 						if (!strcmp (buf, "stop;"))
 						{
-							t = (clock() - t) / CLOCKS_PER_SEC;
 							close (sock);
+							FD_SET (new_sock, &active_set);
 							return 0;
 						}
 						char *s = buf, *end = nullptr;
-						bool err1 = true;
+						bool err1 = true; flag = 0;
 						if ((s = strtok_r(s, ";", &end)) != nullptr)
 						{
 							COM = command_type::none;
 							if ((err1 = test.read_command(s)) != true)
 							{
 								printf("Comand is not right\n");
-								writeToClient (i, 0, nullptr, nullptr, COM, 0, 0, argv[0]);
-								continue;
+								writeToClient (i, 0, nullptr, nullptr, COM);
+								break;
+								
 							}
 							//test.print();
 							COM = test.get_type();
@@ -198,16 +192,13 @@ int main (int argc, char const *argv[])
 							if (test.like())
 							{
 								HELP.read(test.get_name());
-								//printf("LIKE\n");
 							}
 							kol = 0;
 							switch(COM)
 							{
 								case command_type::quit:
-									t = (clock()-t)/CLOCKS_PER_SEC;
 									flag = 1;
 									break;
-								
 								case command_type::insert:
 									list.insert(test, ALL, GROUP);
 									break;
@@ -225,32 +216,19 @@ int main (int argc, char const *argv[])
 									break;
 
 							}
-							kol_all += kol;
-							writeToClient (i, kol, head, test.get_order(), COM, kol_all, t, argv[0]);
-							if (flag == 1)
+							writeToClient (i, kol, head, test.get_order(), COM);
+							if (flag == 1) 
 							{
 								close (i);
 								FD_CLR (i, &active_set);
-								break;
 							}
+							
+							break;
 
-						}
-						if (err1 != true) printf("Comand is not right\n");
-
-						// данные прочитаны нормально
-						
-						// close (i);
-						// FD_CLR (i, &active_set);
-						// а если это команда закончить работу?
-						if (!strcmp (buf, "stop;"))
-						{
-							t = (clock() - t) / CLOCKS_PER_SEC;
-							close (sock);
-							return 0;
 						}
 					}
-
-						// ошибка или конец данных
+					// ошибка или конец данных
+					printf("WF!\n");
 					close (i);
 					FD_CLR (i, &active_set);
 
@@ -272,63 +250,47 @@ int readFromClient (int fd, char *buf)
 
 
 
-int writeToClient (int fd, int kol, list2_node *head, ordering *order_by, command_type COM, int kol_all, double t, const char* s)
+int writeToClient (int fd, int kol, list2_node *head, ordering *order_by, command_type COM)
 {
 	int len = 0;
 	char where[BUFLEN];
 	list2_node *prev = nullptr;
-	// Длина сообщения
-	//printf("%d = kol\n", kol);
 	if (COM == command_type::select)
 	{
-			// Пересылаем длину сообщения
+		// Пересылаем длину сообщения
 		if (send_a_namber(fd, kol) < 0)
 			return -1;
 		// Пересылаем len байт
 		for (int j = 0; j < kol; j++)
 		{
-			//printf("A0\n");
 			where[0] = '\0';
-			//printf("A1\n");
-			//head->print();
-			//printf("A2\n");
 			head->prepare_str(where, order_by);
-			//printf("WANT TO SEND %s\n", where);
 			len = strlen(where);
 			if (send_a_namber(fd, len) < 0) return -1;
 			if (send_a_str(fd, where, len) < 0) return -1; 
 			prev = head;
 			head = head->get_next_select();
 			prev->set_next_select(nullptr);
-			//printf("sended\n");
 		}
 		return 0;
 	}
 	if (COM == command_type::quit)
 	{
-		if (send_a_namber(fd, -7) < 0)
-			return -1;
-		sprintf (where, "%s : Result = %d Elapsed = %.2f", s, kol_all, t);
-		len = strlen(where);
-		if (send_a_namber(fd, len) < 0) return -1;
-		if (send_a_str(fd, where, len) < 0) return -1; 
+		//printf("QUIT\n");
+		if (send_a_namber(fd, -7) < 0) return -1;
 		return 0;
 	}
 	if (COM == command_type::none)
 	{
-		if (send_a_namber(fd, -8) < 0)
-			return -1;
+		//printf("want to send\n");
+		if (send_a_namber(fd, -8) < 0) return -1;
 		sprintf (where, "Command is not right");
 		len = strlen(where);
 		if (send_a_namber(fd, len) < 0) return -1;
 		if (send_a_str(fd, where, len) < 0) return -1; 
 		return 0;
 	}
-
-	if (send_a_namber(fd, 0) < 0)
-		return -1;
-	
-	
+	if (send_a_namber(fd, 0) < 0) return -1;
 	return 0;
 }
 

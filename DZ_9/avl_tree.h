@@ -253,6 +253,7 @@ class avl_tree
 		list2_node * read_record(record& x)
 		{
 			list2_node *ret = nullptr;
+			//printf("READ RECORD\n");
 			root = add_node(x, &ret);
 			return ret;
 		}
@@ -277,8 +278,10 @@ class avl_tree
 		avl_tree_node * add_node(record& x, list2_node **res, list2_node *curr = nullptr)
 		{
 			int delta = 0;
+			//printf("ADD NODE\n");
 			if (root == nullptr)
 			{
+				//printf("NULL\n");
 				avl_tree_node * y = new avl_tree_node;
 				if (curr == nullptr)
 				{
@@ -291,6 +294,7 @@ class avl_tree
 				root->balance = 0;
 				return root;
 			}
+			//printf("Root non null\n");
 			// printf("I wanted to add ");	
 			// y->print();
 			return add_avl_subtree(root, x, curr, delta, res, con);

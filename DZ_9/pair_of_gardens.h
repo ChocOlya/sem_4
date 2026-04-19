@@ -46,9 +46,11 @@ class pair_of_gardens
 	}
 	list2_node * insert(record& x)
 	{
+		if (garden_phone == nullptr || garden_name == nullptr) this->alloc();
 		int index_n = 0, index_ph = 0;
 		hash_f(K1, K2, x, index_n, index_ph);
 		list2_node *el = garden_phone[index_ph].read_record(x);//find in tree and retern lis2_node where it would lie
+		//printf("did sth\n");
 		if (el == nullptr) return nullptr;
 		garden_name[index_n].read(el);
 		return el;

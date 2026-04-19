@@ -285,7 +285,9 @@ class list2
 
 		void insert(record& x, pair_of_gardens& ALL, pair_of_gardens * GROUP)
 		{
+			//printf("yeeeee\n");
 			list2_node * head_new = GROUP[x.get_group()].insert(x);
+			//printf("did\n");
 			if (head_new == nullptr) return;
 			ALL.add_value(head_new);
 			head_new->next = head;

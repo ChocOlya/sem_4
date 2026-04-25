@@ -110,6 +110,7 @@ void writeToServer (int fd, char *buf)
 	// Длина сообщения
 	// Пересылаем длину сообщения
 	if (send_a_namber(fd, len) < 0) return;
+	if (len == 0) return;
 	if (send_a_str(fd, buf, len) < 0) return;
 	return;
 }

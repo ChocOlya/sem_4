@@ -222,13 +222,15 @@ int main (int argc, char const *argv[])
 								close (i);
 								FD_CLR (i, &active_set);
 							}
-							
-							break;
+							continue;
 
 						}
+						writeToClient (i, kol, nullptr, test.get_order(), command_type::none);
+						continue;
+
 					}
 					// ошибка или конец данных
-					printf("WF!\n");
+					printf("Lost conection!\n");
 					close (i);
 					FD_CLR (i, &active_set);
 
@@ -244,6 +246,11 @@ int readFromClient (int fd, char *buf)
 {
 	int len = 0;
 	if (read_a_number(fd, len) < 0) return -1;
+	if (len == 0)
+	{
+		buf[0] = '\0';
+		return 0;
+	}
 	if (read_a_str(fd, buf, len) < 0) return -1;
 	return 0;
 }

@@ -252,14 +252,13 @@ io_status solve4(const char *name_in, const char *name_out, int &res)
 io_status solve5(const char *name_a, const char *name_b, const char *name_out, const char * tau, int &res)
 {
 	FILE *fp_a, *fp_b, *fp_out;
-	char BUF[LEN];int i = 1;
+	char BUF[LEN], Buf_cpy[LEN];int i = 1;
 	char buf0[LEN];
 	char *s, *end_s;
 	sprintf(buf0, "%s\n", tau);
 	char *t = buf0;
 	//printf("%s = t\n", t);
 	std::vector <std::string> words;
-	std::vector <std::pair<std::string, int>> vec_b;
 	
 	if (!(fp_a = fopen(name_a, "r"))) return io_status::fopen_1;
 	if (!(fp_b = fopen(name_b, "r")))
@@ -298,8 +297,7 @@ io_status solve5(const char *name_a, const char *name_b, const char *name_out, c
 	for  (i = 0; fgets(BUF, LEN, fp_b) != nullptr; i++)
 	{
 		kol = 0;
-		//printf("string = %st = %st_len = %d\n", BUF, t, (int)strlen(t));
-		vec_b.push_back(std::make_pair(BUF, 0));
+		strcpy(Buf_cpy, BUF);
 		s = BUF;
 		while ((s = strtok_r(s, t, &end_s)) != nullptr)
 		{
@@ -308,14 +306,12 @@ io_status solve5(const char *name_a, const char *name_b, const char *name_out, c
 				kol++;
 			s = nullptr;
 		}
-		vec_b[i].second = kol;
 		kol_all += kol;
+		fprintf(fp_out, "%d %s", kol, Buf_cpy);
 
 	}
 	res = kol_all;
-	int size = vec_b.size();
-	for (i = 0; i < size; i++)
-		fprintf(fp_out, "%d %s", vec_b[i].second, vec_b[i].first.c_str());
+	
 	fclose(fp_a);
 	fclose(fp_b);
 	fclose(fp_out);
@@ -327,14 +323,13 @@ io_status solve5(const char *name_a, const char *name_b, const char *name_out, c
 io_status solve6(const char *name_a, const char *name_b, const char *name_out, const char * tau, int &res)
 {
 	FILE *fp_a, *fp_b, *fp_out;
-	char BUF[LEN];int i = 1;
+	char BUF[LEN], Buf_cpy[LEN];int i = 1;
 	char buf0[LEN];
 	char *s, *end_s;
 	sprintf(buf0, "%s\n", tau);
 	char *t = buf0;
 	//printf("%s = t\n", t);
 	std::list <std::string> words;
-	std::list <std::pair<std::string, int>> lst_b;
 	
 	if (!(fp_a = fopen(name_a, "r"))) return io_status::fopen_1;
 	if (!(fp_b = fopen(name_b, "r")))
@@ -364,15 +359,12 @@ io_status solve6(const char *name_a, const char *name_b, const char *name_out, c
 	auto beg = words.begin();
 	end = words.end();
 	int kol = 0, kol_all = 0;
-	auto curr = lst_b.begin();
 	for  (i = 0; fgets(BUF, LEN, fp_b) != nullptr; i++)
 	{
 		kol = 0;
 		//printf("string = %st = %st_len = %d\n", BUF, t, (int)strlen(t));
-		lst_b.push_back(std::make_pair(BUF, 0));
-		if (i == 0) curr = lst_b.begin();
-		else curr++;
 		s = BUF;
+		strcpy(Buf_cpy, BUF);
 		while ((s = strtok_r(s, t, &end_s)) != nullptr)
 		{
 			//printf("%s miu\n", s);
@@ -380,13 +372,11 @@ io_status solve6(const char *name_a, const char *name_b, const char *name_out, c
 				kol++;
 			s = nullptr;
 		}
-		curr->second = kol;
 		kol_all += kol;
+		fprintf(fp_out, "%d %s", kol, Buf_cpy);
 
 	}
 	res = kol_all;
-	for (auto el = lst_b.begin(); el != lst_b.end(); el++)
-		fprintf(fp_out, "%d %s", el->second, el->first.c_str());
 	fclose(fp_a);
 	fclose(fp_b);
 	fclose(fp_out);

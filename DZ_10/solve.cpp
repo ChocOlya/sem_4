@@ -29,7 +29,12 @@ io_status solve1(const char *name_in, const char *name_out, int &res)
 		vec.push_back(std::make_pair(BUF, i));
 	}
 	//printf("Vector was constractid\n");
-	std::sort(vec.begin(), vec.end());
+	std::sort(vec.begin(), vec.end(), 
+	[](const auto a, const auto b) 
+	{
+		if (a.first != b.first) return a.first < b.first; 
+		else return a.second < b.second;
+	} );
 	//printf("Vector was sorted\n");
 	if (i == 0)
 	{
@@ -38,27 +43,20 @@ io_status solve1(const char *name_in, const char *name_out, int &res)
 		res = 0;
 		return io_status::success;
 	}
-	int kol = 1;
-	auto el = vec.begin(), end = vec.end();
-	while (el != end - kol)//not last
+	//auto el = vec.begin(), end = vec.end();
+	int size = vec.size();
+	int j = 1;
+	for (i = 1; i < size; i++)//vec[j - 1] - first of elements with equal name
 	{
-		if (el->first == (el + 1)->first)//need to delite one of them
+		//printf("CURR = %sPREV = %s", vec[i].first.c_str(), vec[j - 1].first.c_str());
+		if (vec[j - 1].first != vec[i].first)
 		{
-			//printf("Need to delite one of them they are %s and %s\n", el->first.c_str(), el->first.c_str());
-			if (el->second < (el + 1)->second) 
-			{
-				if (el + 1 == end - kol)
-				{
-					vec.erase(el + 1);
-					break;
-				}
-				vec.erase(el + 1);
-			}
-			else vec.erase(el);
-			kol++;
+			if (j != i) vec[j] = std::move(vec[i]);
+			j++;
 		}
-		else el++;
-	}
+	}//j - is lenth
+	//printf("j = %d\n", j);
+	vec.erase(vec.begin() + j, vec.end());
 	//printf("Deleted sth\n");
 	std::sort(vec.begin(), vec.end(), [](const auto& a, const auto& b) { return a.second < b.second; });
 	//printf("Sorted again\n");
@@ -69,20 +67,6 @@ io_status solve1(const char *name_in, const char *name_out, int &res)
 	fclose(fp_out);
 	return io_status::success;
 }
-
-/*
-auto el = vec.begin(), end = vec.end();
-while (el != end - 1)
-{
-	if (el->first == (el + 1)->first)
-	{
-		if (el->second < (el + 1)->second) vec.erase(el + 1);
-		else vec.erase(el);
-	}
-	if (el == end - 1) break;
-	else el++;
-}
-*/
 
 
 

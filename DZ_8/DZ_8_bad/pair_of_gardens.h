@@ -46,11 +46,9 @@ class pair_of_gardens
 	}
 	list2_node * insert(record& x)
 	{
-		if (garden_phone == nullptr || garden_name == nullptr) this->alloc();
 		int index_n = 0, index_ph = 0;
 		hash_f(K1, K2, x, index_n, index_ph);
 		list2_node *el = garden_phone[index_ph].read_record(x);//find in tree and retern lis2_node where it would lie
-		//printf("did sth\n");
 		if (el == nullptr) return nullptr;
 		garden_name[index_n].read(el);
 		return el;
@@ -77,13 +75,13 @@ class pair_of_gardens
 	}
 
 
-	list2_node *name_phone_AND(command *test, razbor *HELP = nullptr)//op = land, name or phone =
+	list2_node *name_phone_AND(command *test)
 	{
 		int index_n = 0, index_ph = 0;
 		list2_node *pupu = nullptr;
 		hash_f(K1, K2, *test, index_n, index_ph);
 		if (test->get_c_phone() == condition::eq)
-			return garden_phone[index_ph].find_in_tree(test, &pupu, HELP);
+			return garden_phone[index_ph].find_in_tree(test, &pupu);
 		return garden_name[index_n].find_in_tree(test, &pupu);
 	}
 
